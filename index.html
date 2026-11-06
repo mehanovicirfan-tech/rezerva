@@ -1,0 +1,570 @@
+<!doctype html><html lang="bs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="icon-192.png"><meta name="theme-color" content="#1F5163"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Rezerva"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Rezerva hrane Mehanović</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky top bar + tab views; stock list as rows like a pantry shelf ledger, one column on phone */
+:root{
+  --bg:#F1F4F1; --surface:#FFFFFF; --sunk:#E6EBE7; --ink:#18211D; --muted:#5A6862; --line:#D4DCD7;
+  --accent:#1F5163; --accent-ink:#FFFFFF; --accent-soft:#DCE9EE;
+  --ok:#2E7A4E; --ok-soft:#DDF0E3; --warn:#B26A0A; --warn-soft:#FBEBD2; --bad:#B8382A; --bad-soft:#F8DDD8;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111715; --surface:#19211E; --sunk:#0C110F; --ink:#E6ECE8; --muted:#97A59E; --line:#2B3632;
+  --accent:#7FC0D6; --accent-ink:#0B1A20; --accent-soft:#1C3440;
+  --ok:#6CCB8F; --ok-soft:#173225; --warn:#F0AE4E; --warn-soft:#3A2A12; --bad:#F2806F; --bad-soft:#3D1D18; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111715; --surface:#19211E; --sunk:#0C110F; --ink:#E6ECE8; --muted:#97A59E; --line:#2B3632;
+  --accent:#7FC0D6; --accent-ink:#0B1A20; --accent-soft:#1C3440;
+  --ok:#6CCB8F; --ok-soft:#173225; --warn:#F0AE4E; --warn-soft:#3A2A12; --bad:#F2806F; --bad-soft:#3D1D18; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:960px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px;flex-wrap:wrap}
+.brand{font:800 clamp(17px,4.6vw,22px)/1.1 var(--f-display);letter-spacing:-.02em;display:flex;align-items:center;gap:8px;margin-right:auto;min-width:0;flex:1 1 0}
+.brand svg{flex:none}
+.brand svg{width:26px;height:26px}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--sunk)}
+.lang button{border:0;background:none;padding:4px 12px;border-radius:999px;cursor:pointer;font-weight:700;font-size:13px;letter-spacing:.04em;color:var(--muted)}
+.lang button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0 / .15)}
+nav.tabs{display:flex;gap:4px;width:100%;overflow-x:auto}
+nav.tabs button{border:0;background:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:700;color:var(--muted);white-space:nowrap}
+nav.tabs button[aria-selected="true"]{background:var(--accent-soft);color:var(--ink)}
+main{padding-block:20px 120px}
+h1,h2,h3{font-family:var(--f-display);letter-spacing:-.01em;text-wrap:balance;margin:0}
+h2{font-size:24px;font-weight:800}
+h3{font-size:17px;font-weight:600}
+.muted{color:var(--muted)}
+.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:10px;cursor:pointer;font-weight:700}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.small{padding:5px 10px;font-size:14px}
+.btn.ghost{border-color:transparent;background:none}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;cursor:pointer;text-align:left}
+.stat[aria-pressed="true"]{outline:2px solid var(--accent)}
+.stat b{display:block;font:800 28px/1.1 var(--f-display);font-variant-numeric:tabular-nums}
+.stat.bad b{color:var(--bad)} .stat.warn b{color:var(--warn)} .stat.ok b{color:var(--ok)}
+@media (max-width:560px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.alert{display:flex;gap:12px;align-items:flex-start;background:var(--warn-soft);border:1px solid var(--warn);border-radius:var(--r);padding:12px 14px;margin-bottom:16px}
+.alert.bad{background:var(--bad-soft);border-color:var(--bad)}
+.alert ul{margin:4px 0 0;padding-left:18px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toolbar input[type=search]{flex:1 1 220px;min-width:0}
+input[type=text],input[type=number],input[type=date],input[type=search],select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%}
+.toolbar select{width:auto}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;position:relative}
+.item.exp-bad{border-left:5px solid var(--bad)} .item.exp-warn{border-left:5px solid var(--warn)} .item.exp-ok{border-left:5px solid var(--ok)} .item.exp-none{border-left:5px solid var(--line)}
+.thumb{width:72px;height:72px;border-radius:8px;background:var(--sunk);object-fit:cover;display:grid;place-items:center;color:var(--muted);overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.item .info{min-width:0}
+.item .name{font-weight:700;font-size:17px;overflow-wrap:anywhere}
+.item .desc{color:var(--muted);font-size:14px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.meta{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:4px;align-items:center}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.pill.bad{background:var(--bad-soft);color:var(--bad)} .pill.warn{background:var(--warn-soft);color:var(--warn)} .pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.none{background:var(--sunk);color:var(--muted)}
+.pill.ex{background:var(--accent-soft);color:var(--accent)}
+.qty{display:flex;align-items:center;gap:4px}
+.qty button{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--sunk);cursor:pointer;font-weight:800;font-size:18px;line-height:1}
+.qty span{min-width:34px;text-align:center;font:600 18px var(--f-mono)}
+.item .actions{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+@media (max-width:560px){
+  .item{grid-template-columns:60px minmax(0,1fr);gap:10px}
+  .thumb{width:60px;height:60px}
+  .item .actions{grid-column:1 / -1;flex-direction:row;justify-content:space-between;align-items:center}
+}
+.empty{text-align:center;padding:40px 16px;border:2px dashed var(--line);border-radius:var(--r);color:var(--muted)}
+.fab{position:fixed;right:max(20px,calc(env(safe-area-inset-right,0px) + 16px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:6;border-radius:999px;padding:14px 22px;font-size:17px;box-shadow:0 6px 18px rgb(0 0 0 / .25)}
+/* modal */
+.scrim{position:fixed;inset:0;background:rgb(0 0 0 / .45);z-index:20;display:grid;place-items:center;padding:16px}
+.dialog{background:var(--surface);border-radius:16px;width:min(560px,100%);max-height:calc(100% - 16px);overflow:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+.dialog header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+@media (max-width:440px){.grid2{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field > span{font-size:14px;font-weight:700}
+.photo{display:flex;gap:12px;align-items:center}
+.photo .thumb{width:96px;height:96px}
+.dialog footer{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+/* suggestions */
+.sug-head{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin:8px 0 18px}
+.sug-head .field{width:140px}
+.cat{margin-bottom:22px}
+.cat h3{margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.cat h3 small{font:600 13px var(--f-body);color:var(--muted)}
+.sug{display:grid;grid-template-columns:28px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
+.sug.have{background:var(--ok-soft);border-color:transparent}
+.sug .chk{width:22px;height:22px;accent-color:var(--ok)}
+.sug .n{font-weight:700}
+.sug .note{font-size:13px;color:var(--muted)}
+.sug .amt{font:600 14px var(--f-mono);white-space:nowrap;text-align:right}
+@media (max-width:560px){.sug{grid-template-columns:28px minmax(0,1fr) auto}.sug .add{grid-column:2 / -1;justify-self:start}}
+.progress{height:8px;border-radius:99px;background:var(--sunk);overflow:hidden;margin-top:6px}
+.progress i{display:block;height:100%;background:var(--ok)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;z-index:30;font-weight:700}
+textarea.code{font:12px var(--f-mono);height:140px}
+@media (prefers-reduced-motion:no-preference){.item,.sug{transition:background .2s}}
+</style>
+
+</head><body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="var(--accent)"/><rect x="7" y="10" width="7" height="12" rx="1.5" fill="var(--accent-ink)"/><rect x="16" y="14" width="9" height="8" rx="1.5" fill="var(--accent-ink)" opacity=".7"/></svg><span data-t="app"></span></div>
+    <div class="lang" role="group" aria-label="Jezik / Langue">
+      <button id="lang-bs" data-lang="bs">BS</button><button id="lang-fr" data-lang="fr">FR</button>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" id="tab-stock" data-view="stock" data-t="tabStock"></button>
+      <button role="tab" id="tab-sug" data-view="sug" data-t="tabSug"></button>
+      <button role="tab" id="tab-set" data-view="set" data-t="tabSet"></button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="view-stock"></section>
+  <section id="view-sug" hidden></section>
+  <section id="view-set" hidden></section>
+</main>
+<button class="btn primary fab" id="fab" data-t="add"></button>
+<div id="modal"></div>
+
+<script>
+(() => {
+"use strict";
+/* ---------- i18n ---------- */
+const T = {
+bs:{app:"Rezerva hrane Mehanović",tabStock:"Zaliha",tabSug:"Prijedlozi",tabSet:"Postavke",add:"+ Dodaj proizvod",
+ total:"Proizvoda",expired:"Isteklo",soon:"Uskoro ističe",okS:"U redu",search:"Pretraži…",allCats:"Sve kategorije",
+ sortExp:"Po datumu isteka",sortName:"Po nazivu",sortQty:"Po količini",sortNew:"Najnovije",
+ name:"Naziv proizvoda",desc:"Opis",weight:"Gramaža / zapremina",unit:"Jedinica",qty:"Količina (komada)",expiry:"Rok trajanja",cat:"Kategorija",photo:"Slika proizvoda",
+ takePhoto:"Uslikaj / odaberi sliku",removePhoto:"Ukloni sliku",save:"Spremi",cancel:"Odustani",del:"Obriši",edit:"Uredi",newItem:"Novi proizvod",editItem:"Uredi proizvod",
+ confirmDel:"Obrisati ovaj proizvod?",yesDel:"Da, obriši",
+ daysLeft:n=>n===0?"ističe danas":n===1?"još 1 dan":`još ${n} dana`, daysAgo:n=>n===1?"isteklo prije 1 dan":`isteklo prije ${n} dana`, noExp:"bez roka",
+ alertSoon:n=>`${n} ${n===1?"proizvod uskoro ističe":"proizvoda uskoro ističe"}. Iskoristite ih prvo i kupite zamjenu.`,
+ alertExp:n=>`${n} ${n===1?"proizvodu je istekao rok":"proizvoda ima istekao rok"}.`,
+ empty:"Još nemate proizvoda. Dodajte prvi ili otvorite Prijedloge.",noMatch:"Nema proizvoda za ovaj filter.",
+ example:"primjer",removeEx:"Ukloni primjere",exNote:"Prikazani su primjeri proizvoda da vidite kako aplikacija radi.",
+ people:"Broj osoba",days:"Broj dana",sugIntro:"Preporučena zaliha za domaćinstvo. Količine se računaju prema broju osoba i dana. Označite što već imate ili dodajte u zalihu jednim klikom.",
+ have:"imam",addToStock:"+ U zalihu",ready:"Spremnost",perPD:"po osobi dnevno",
+ settings:"Postavke",warnDays:"Upozori koliko dana prije isteka",notif:"Obavijesti",notifOn:"Uključi obavijesti",notifState:{granted:"Obavijesti su uključene.",denied:"Preglednik je blokirao obavijesti. Dozvolite ih u postavkama preglednika.",default:"Obavijesti nisu uključene.",unsupported:"Ovdje sistemske obavijesti nisu dostupne. Upozorenja se prikazuju unutar aplikacije pri svakom otvaranju."},
+ notifHelp:"Aplikacija provjerava rokove svaki put kad je otvorite i prikazuje upozorenje na vrhu Zalihe.",
+ sync:"Sinhronizacija računar ↔ telefon",cloudOn:"Podaci su sačuvani na vašem Claude računu. Kad ste prijavljeni, računar i telefon automatski vide iste proizvode, slike i postavke.",cloudLocal:"Podaci su samo na ovom uređaju. Otvorite aplikaciju prijavljeni na svoj Claude račun da bi se sinhronizovali.",cloudWait:"Povezivanje sa serverom…",cloudErr:"Server trenutno nije dostupan. Promjene ostaju na ovom uređaju.",cloudFull:"Prostor za podatke je pun. Obrišite nekoliko starih proizvoda ili slika.",
+ backup:"Sigurnosna kopija i prenos",backupHelp:"Izvezite kopiju da je sačuvate ili da prenesete podatke na drugi uređaj ili drugu osobu.",
+ exportB:"Izvezi kopiju",importB:"Uvezi kopiju",copy:"Kopiraj",copied:"Kopirano",exportHelp:"Kopirajte ovaj tekst i sačuvajte ga, ili ga zalijepite u polje za uvoz na drugom uređaju.",
+ pasteHere:"Ili zalijepite tekst kopije ovdje",doImport:"Uvezi",imported:n=>`Uvezeno proizvoda: ${n}`,badFile:"Ova datoteka nije ispravna kopija Rezerve.",
+ wipe:"Obriši sve podatke",wipeQ:"Obrisati sve proizvode s ovog uređaja? Ovo se ne može poništiti.",wiped:"Svi podaci obrisani",saved:"Spremljeno",deleted:"Obrisano",
+ notifTitle:"Rezerva hrane Mehanović: provjerite rokove",close:"Zatvori",required:"Upišite naziv proizvoda.",
+ cats:{food:"Hrana",water:"Voda i piće",med:"Prva pomoć i lijekovi",hyg:"Higijena",energy:"Svjetlo, energija i vatra",tools:"Alat i oprema",docs:"Dokumenti i novac",other:"Ostalo"}},
+fr:{app:"Rezerva hrane Mehanović",tabStock:"Stock",tabSug:"Suggestions",tabSet:"Réglages",add:"+ Ajouter un produit",
+ total:"Produits",expired:"Périmés",soon:"Bientôt périmés",okS:"En ordre",search:"Rechercher…",allCats:"Toutes catégories",
+ sortExp:"Par date de péremption",sortName:"Par nom",sortQty:"Par quantité",sortNew:"Les plus récents",
+ name:"Nom du produit",desc:"Description",weight:"Poids / volume",unit:"Unité",qty:"Quantité (pièces)",expiry:"Date de péremption",cat:"Catégorie",photo:"Photo du produit",
+ takePhoto:"Prendre / choisir une photo",removePhoto:"Retirer la photo",save:"Enregistrer",cancel:"Annuler",del:"Supprimer",edit:"Modifier",newItem:"Nouveau produit",editItem:"Modifier le produit",
+ confirmDel:"Supprimer ce produit ?",yesDel:"Oui, supprimer",
+ daysLeft:n=>n===0?"périme aujourd'hui":n===1?"encore 1 jour":`encore ${n} jours`, daysAgo:n=>n===1?"périmé depuis 1 jour":`périmé depuis ${n} jours`, noExp:"sans date",
+ alertSoon:n=>`${n} produit${n>1?"s":""} bientôt périmé${n>1?"s":""}. Consommez-les d'abord et rachetez-en.`,
+ alertExp:n=>`${n} produit${n>1?"s sont périmés":" est périmé"}.`,
+ empty:"Aucun produit pour l'instant. Ajoutez le premier ou ouvrez les Suggestions.",noMatch:"Aucun produit pour ce filtre.",
+ example:"exemple",removeEx:"Retirer les exemples",exNote:"Des produits d'exemple sont affichés pour montrer le fonctionnement.",
+ people:"Personnes",days:"Jours",sugIntro:"Réserve recommandée pour le foyer. Les quantités sont calculées selon le nombre de personnes et de jours. Cochez ce que vous avez déjà ou ajoutez-le au stock en un clic.",
+ have:"j'ai",addToStock:"+ Au stock",ready:"Préparation",perPD:"par personne et par jour",
+ settings:"Réglages",warnDays:"Avertir combien de jours avant la péremption",notif:"Notifications",notifOn:"Activer les notifications",notifState:{granted:"Les notifications sont activées.",denied:"Le navigateur bloque les notifications. Autorisez-les dans ses réglages.",default:"Les notifications ne sont pas activées.",unsupported:"Les notifications système ne sont pas disponibles ici. Les alertes s'affichent dans l'application à chaque ouverture."},
+ notifHelp:"L'application vérifie les dates à chaque ouverture et affiche une alerte en haut du Stock.",
+ sync:"Synchronisation ordinateur ↔ téléphone",cloudOn:"Les données sont enregistrées sur votre compte Claude. Une fois connecté, l'ordinateur et le téléphone voient automatiquement les mêmes produits, photos et réglages.",cloudLocal:"Les données restent sur cet appareil. Ouvrez l'application connecté à votre compte Claude pour les synchroniser.",cloudWait:"Connexion au serveur…",cloudErr:"Le serveur est indisponible pour l'instant. Les modifications restent sur cet appareil.",cloudFull:"L'espace de stockage est plein. Supprimez quelques anciens produits ou photos.",
+ backup:"Sauvegarde et transfert",backupHelp:"Exportez une sauvegarde pour la garder ou transférer les données vers un autre appareil ou une autre personne.",
+ exportB:"Exporter",importB:"Importer",copy:"Copier",copied:"Copié",exportHelp:"Copiez ce texte et gardez-le, ou collez-le dans le champ d'import sur l'autre appareil.",
+ pasteHere:"Ou collez le texte de la sauvegarde ici",doImport:"Importer",imported:n=>`Produits importés : ${n}`,badFile:"Ce fichier n'est pas une sauvegarde Rezerva valide.",
+ wipe:"Effacer toutes les données",wipeQ:"Effacer tous les produits de cet appareil ? C'est irréversible.",wiped:"Données effacées",saved:"Enregistré",deleted:"Supprimé",
+ notifTitle:"Rezerva hrane Mehanović : vérifiez les dates",close:"Fermer",required:"Saisissez le nom du produit.",
+ cats:{food:"Alimentation",water:"Eau et boissons",med:"Premiers secours et médicaments",hyg:"Hygiène",energy:"Lumière, énergie et feu",tools:"Outils et équipement",docs:"Documents et argent",other:"Autre"}}
+};
+const UNITS=["g","kg","ml","L","kom"];
+/* Suggestions: m = mode: d = per person per day, p = per person for whole period (scaled by days/14), h = per household (fixed)
+   q = amount, u = unit, shelf = typical shelf life hint */
+const SUG=[
+ {c:"water",items:[
+  {id:"water",bs:"Voda za piće (boce)",fr:"Eau potable (bouteilles)",m:"d",q:3,u:"L",nbs:"2 L za piće + 1 L za kuhanje i higijenu",nfr:"2 L à boire + 1 L pour cuisine et hygiène"},
+  {id:"wtabs",bs:"Tablete za pročišćavanje vode",fr:"Pastilles de purification d'eau",m:"h",q:1,u:"pak",nbs:"ili prijenosni filter za vodu",nfr:"ou filtre à eau portable"},
+  {id:"juice",bs:"Sok ili trajno mlijeko",fr:"Jus ou lait UHT",m:"p",q:3,u:"L",nbs:"tetrapak, dugo traje",nfr:"brique, longue conservation"}]},
+ {c:"food",items:[
+  {id:"rice",bs:"Riža",fr:"Riz",m:"d",q:70,u:"g",nbs:"2–3 godine u zatvorenoj posudi",nfr:"2–3 ans en récipient fermé"},
+  {id:"pasta",bs:"Tjestenina",fr:"Pâtes",m:"d",q:70,u:"g",nbs:"kuha se brzo, malo goriva",nfr:"cuisson rapide, peu de combustible"},
+  {id:"oats",bs:"Zobene pahuljice",fr:"Flocons d'avoine",m:"d",q:50,u:"g",nbs:"mogu se jesti i bez kuhanja",nfr:"se mangent aussi sans cuisson"},
+  {id:"cmeat",bs:"Konzerve mesa ili ribe (tuna, sardine)",fr:"Conserves de viande ou poisson (thon, sardines)",m:"d",q:1,u:"kom",nbs:"proteini, 3–5 godina",nfr:"protéines, 3–5 ans"},
+  {id:"cveg",bs:"Konzerve graha, leblebija, povrća",fr:"Conserves de haricots, pois chiches, légumes",m:"d",q:1,u:"kom",nbs:"spremno za jelo",nfr:"prêt à manger"},
+  {id:"lentil",bs:"Sočivo / grah (suhi)",fr:"Lentilles / haricots secs",m:"p",q:500,u:"g",nbs:"dugo traje, treba kuhanje",nfr:"longue conservation, nécessite cuisson"},
+  {id:"flour",bs:"Brašno",fr:"Farine",m:"p",q:1,u:"kg",nbs:"za hljeb, pitu, palačinke",nfr:"pour pain, galettes, crêpes"},
+  {id:"oil",bs:"Ulje za kuhanje",fr:"Huile de cuisson",m:"p",q:0.5,u:"L",nbs:"",nfr:""},
+  {id:"sugar",bs:"Šećer i med",fr:"Sucre et miel",m:"p",q:500,u:"g",nbs:"med praktično ne ističe",nfr:"le miel ne périme presque pas"},
+  {id:"salt",bs:"So",fr:"Sel",m:"h",q:1,u:"kg",nbs:"",nfr:""},
+  {id:"milkp",bs:"Mlijeko u prahu",fr:"Lait en poudre",m:"p",q:400,u:"g",nbs:"",nfr:""},
+  {id:"crack",bs:"Dvopek, krekeri, hrskavi hljeb",fr:"Biscottes, crackers, pain croustillant",m:"p",q:500,u:"g",nbs:"zamjena za hljeb",nfr:"remplace le pain"},
+  {id:"nuts",bs:"Orašasti plodovi i suho voće",fr:"Fruits secs et à coque",m:"p",q:500,u:"g",nbs:"puno kalorija, malo prostora",nfr:"beaucoup de calories, peu de place"},
+  {id:"bars",bs:"Energetske pločice / čokolada",fr:"Barres énergétiques / chocolat",m:"d",q:1,u:"kom",nbs:"",nfr:""},
+  {id:"soup",bs:"Supe u kesici / bujon",fr:"Soupes en sachet / bouillon",m:"p",q:5,u:"kom",nbs:"",nfr:""},
+  {id:"spread",bs:"Pašteta, džem, kikiriki puter",fr:"Pâté, confiture, beurre de cacahuète",m:"p",q:3,u:"kom",nbs:"",nfr:""},
+  {id:"coffee",bs:"Kafa i čaj",fr:"Café et thé",m:"h",q:500,u:"g",nbs:"za moral",nfr:"pour le moral"},
+  {id:"vit",bs:"Vitamini (multivitamin)",fr:"Vitamines (multivitamines)",m:"p",q:14,u:"kom",nbs:"",nfr:""}]},
+ {c:"energy",items:[
+  {id:"torch",bs:"Baterijska lampa i čeona lampa",fr:"Lampe torche et frontale",m:"h",q:2,u:"kom",nbs:"po jedna po osobi je idealno",nfr:"idéalement une par personne"},
+  {id:"batt",bs:"Baterije AA i AAA",fr:"Piles AA et AAA",m:"h",q:24,u:"kom",nbs:"provjerite koje veličine trebaju vaši uređaji",nfr:"vérifiez les tailles de vos appareils"},
+  {id:"radio",bs:"Radio na baterije ili dinamo",fr:"Radio à piles ou à dynamo",m:"h",q:1,u:"kom",nbs:"za vijesti kad nema struje i interneta",nfr:"pour les infos sans courant ni internet"},
+  {id:"power",bs:"Powerbank (napunjen)",fr:"Batterie externe (chargée)",m:"h",q:2,u:"kom",nbs:"dopunite svaka 3 mjeseca",nfr:"rechargez tous les 3 mois"},
+  {id:"lighter",bs:"Upaljači",fr:"Briquets",m:"h",q:4,u:"kom",nbs:"",nfr:""},
+  {id:"match",bs:"Šibice (vodootporne)",fr:"Allumettes (étanches)",m:"h",q:3,u:"kut",nbs:"",nfr:""},
+  {id:"candle",bs:"Svijeće",fr:"Bougies",m:"p",q:3,u:"kom",nbs:"nikad bez nadzora",nfr:"jamais sans surveillance"},
+  {id:"stove",bs:"Plinsko kuhalo + kartuše",fr:"Réchaud à gaz + cartouches",m:"h",q:1,u:"kom",nbs:"koristiti samo uz provjetravanje",nfr:"uniquement dans un lieu aéré"}]},
+ {c:"med",items:[
+  {id:"fak",bs:"Kutija prve pomoći",fr:"Trousse de premiers secours",m:"h",q:1,u:"kom",nbs:"zavoji, flasteri, gaza, makaze",nfr:"bandages, pansements, gaze, ciseaux"},
+  {id:"rx",bs:"Lični lijekovi (stalna terapija)",fr:"Médicaments personnels (traitement)",m:"d",q:1,u:"doza",nbs:"zaliha za cijeli period",nfr:"réserve pour toute la période"},
+  {id:"pain",bs:"Lijekovi protiv bolova i temperature",fr:"Antidouleurs et antipyrétiques",m:"h",q:2,u:"kut",nbs:"paracetamol, ibuprofen",nfr:"paracétamol, ibuprofène"},
+  {id:"disinf",bs:"Sredstvo za dezinfekciju rana",fr:"Désinfectant pour plaies",m:"h",q:1,u:"kom",nbs:"",nfr:""},
+  {id:"thermo",bs:"Termometar",fr:"Thermomètre",m:"h",q:1,u:"kom",nbs:"",nfr:""},
+  {id:"masks",bs:"Maske FFP2",fr:"Masques FFP2",m:"p",q:5,u:"kom",nbs:"",nfr:""}]},
+ {c:"hyg",items:[
+  {id:"tp",bs:"Toalet papir",fr:"Papier toilette",m:"p",q:4,u:"rola",nbs:"",nfr:""},
+  {id:"soap",bs:"Sapun i gel za ruke",fr:"Savon et gel hydroalcoolique",m:"p",q:1,u:"kom",nbs:"",nfr:""},
+  {id:"wipes",bs:"Vlažne maramice",fr:"Lingettes",m:"p",q:2,u:"pak",nbs:"pranje bez vode",nfr:"toilette sans eau"},
+  {id:"bags",bs:"Kese za smeće",fr:"Sacs poubelle",m:"h",q:20,u:"kom",nbs:"služe i kao zaštita od kiše",nfr:"servent aussi de protection pluie"},
+  {id:"bleach",bs:"Varikina",fr:"Eau de Javel",m:"h",q:1,u:"L",nbs:"za čišćenje i dezinfekciju",nfr:"nettoyage et désinfection"},
+  {id:"fem",bs:"Higijenski ulošci / pelene",fr:"Protections hygiéniques / couches",m:"h",q:1,u:"pak",nbs:"po potrebi",nfr:"selon besoin"}]},
+ {c:"tools",items:[
+  {id:"opener",bs:"Ručni otvarač za konzerve",fr:"Ouvre-boîte manuel",m:"h",q:1,u:"kom",nbs:"bez njega konzerve ne pomažu",nfr:"indispensable pour les conserves"},
+  {id:"knife",bs:"Višenamjenski nož",fr:"Couteau multifonction",m:"h",q:1,u:"kom",nbs:"",nfr:""},
+  {id:"tape",bs:"Ljepljiva traka (izolir)",fr:"Ruban adhésif (gaffer)",m:"h",q:1,u:"kom",nbs:"",nfr:""},
+  {id:"rope",bs:"Konopac",fr:"Corde",m:"h",q:10,u:"m",nbs:"",nfr:""},
+  {id:"blanket",bs:"Termo-folija i deke",fr:"Couverture de survie et couvertures",m:"p",q:1,u:"kom",nbs:"",nfr:""},
+  {id:"gloves",bs:"Radne rukavice",fr:"Gants de travail",m:"h",q:2,u:"par",nbs:"",nfr:""},
+  {id:"whistle",bs:"Zviždaljka",fr:"Sifflet",m:"h",q:1,u:"kom",nbs:"za dozivanje pomoći",nfr:"pour appeler à l'aide"},
+  {id:"canister",bs:"Kanister za vodu",fr:"Jerrican d'eau",m:"h",q:1,u:"kom",nbs:"10–20 L",nfr:"10–20 L"},
+  {id:"bag",bs:"Ranac za hitni izlazak",fr:"Sac d'évacuation",m:"p",q:1,u:"kom",nbs:"spreman uz vrata",nfr:"prêt près de la porte"}]},
+ {c:"docs",items:[
+  {id:"cash",bs:"Gotovina u sitnim apoenima",fr:"Espèces en petites coupures",m:"h",q:1,u:"",nbs:"kartice ne rade bez struje",nfr:"les cartes ne marchent pas sans courant"},
+  {id:"copies",bs:"Kopije dokumenata u vodootpornoj kesi",fr:"Copies de documents en pochette étanche",m:"h",q:1,u:"kom",nbs:"lična karta, pasoš, zdravstvena",nfr:"carte d'identité, passeport, carte vitale"},
+  {id:"contacts",bs:"Lista važnih brojeva na papiru",fr:"Liste des numéros importants sur papier",m:"h",q:1,u:"kom",nbs:"",nfr:""},
+  {id:"map",bs:"Papirna karta područja",fr:"Carte papier de la région",m:"h",q:1,u:"kom",nbs:"",nfr:""}]}
+];
+const UNIT_TR={kom:"pce",kut:"boîte",pak:"paquet",rola:"rouleau",par:"paire",doza:"dose"};
+
+/* ---------- state & storage ---------- */
+const S = {lang:"bs",view:"stock",warnDays:30,people:3,days:14,have:{},q:"",cat:"",sort:"exp",filter:"",seeded:false};
+const LS="rezerva.settings.v1";
+try{Object.assign(S,JSON.parse(localStorage.getItem(LS)||"{}"))}catch(e){}
+S.q="";S.filter="";if(!S.v2){S.people=3;S.v2=true}
+function saveSettings(){try{const {q,filter,...rest}=S;localStorage.setItem(LS,JSON.stringify(rest))}catch(e){}}
+let items=[];
+let db=null;
+function openDB(){return new Promise(res=>{try{const r=indexedDB.open("rezerva",1);r.onupgradeneeded=()=>r.result.createObjectStore("items",{keyPath:"id"});r.onsuccess=()=>{db=r.result;res()};r.onerror=()=>res()}catch(e){res()}})}
+function dbAll(){return new Promise(res=>{if(!db)return res(null);try{const q=db.transaction("items").objectStore("items").getAll();q.onsuccess=()=>res(q.result);q.onerror=()=>res(null)}catch(e){res(null)}})}
+function dbPut(it){if(!db)return;try{db.transaction("items","readwrite").objectStore("items").put(it)}catch(e){}}
+function dbDel(id){if(!db)return;try{db.transaction("items","readwrite").objectStore("items").delete(id)}catch(e){}}
+function dbClear(){if(!db)return;try{db.transaction("items","readwrite").objectStore("items").clear()}catch(e){}}
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const t=k=>T[S.lang][k];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const unitL=u=>S.lang==="fr"?(UNIT_TR[u]||u):u;
+function todayISO(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function addDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function daysLeft(iso){if(!iso)return null;const [y,m,d]=iso.split("-").map(Number);const a=new Date(y,m-1,d);const n=new Date();const b=new Date(n.getFullYear(),n.getMonth(),n.getDate());return Math.round((a-b)/86400000)}
+function status(it){const d=daysLeft(it.expiry);if(d===null)return"none";if(d<0)return"bad";if(d<=S.warnDays)return"warn";return"ok"}
+function fmtDate(iso){if(!iso)return"";const [y,m,d]=iso.split("-");return S.lang==="fr"?`${d}/${m}/${y}`:`${d}.${m}.${y}.`}
+function expLabel(it){const d=daysLeft(it.expiry);if(d===null)return t("noExp");return d<0?t("daysAgo")(-d):t("daysLeft")(d)}
+function toast(msg){const el=document.createElement("div");el.className="toast";el.textContent=msg;el.setAttribute("role","status");document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
+const inFrame=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+
+/* ---------- example seed ---------- */
+function seed(){
+  const ex=[
+   {name:"Tuna u ulju",desc:"Konzerva, otvara se bez otvarača",w:160,u:"g",qty:6,expiry:addDays(420),cat:"food"},
+   {name:"Riža dugo zrno",desc:"U plastičnoj kanti u podrumu",w:1,u:"kg",qty:3,expiry:addDays(600),cat:"food"},
+   {name:"Voda Jana 1,5 L",desc:"Paket od 6 boca",w:1.5,u:"L",qty:12,expiry:addDays(18),cat:"water"},
+   {name:"Baterije AA",desc:"Alkalne, za lampu i radio",w:"",u:"kom",qty:8,expiry:addDays(1800),cat:"energy"},
+   {name:"Dvopek",desc:"Otvoreno pakovanje",w:250,u:"g",qty:1,expiry:addDays(-4),cat:"food"}
+  ];
+  return ex.map((e,i)=>({id:uid()+i,created:Date.now()-i*1000,ex:true,photo:"",...e}));
+}
+
+/* ---------- render: stock ---------- */
+function render(){
+  document.documentElement.lang=S.lang;
+  document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t));
+  document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===S.lang));
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.view===S.view));
+  ["stock","sug","set"].forEach(v=>$("#view-"+v).hidden=v!==S.view);
+  $("#fab").hidden=S.view!=="stock";
+  if(S.view==="stock")renderStock(); else if(S.view==="sug")renderSug(); else renderSet();
+}
+function renderStock(){
+  const counts={bad:0,warn:0,ok:0,none:0};items.forEach(i=>counts[status(i)]++);
+  const soon=items.filter(i=>status(i)==="warn").sort((a,b)=>daysLeft(a.expiry)-daysLeft(b.expiry));
+  const exp=items.filter(i=>status(i)==="bad");
+  let list=items.filter(i=>{
+    if(S.cat&&i.cat!==S.cat)return false;
+    if(S.filter&&status(i)!==S.filter)return false;
+    if(S.q){const q=S.q.toLowerCase();if(!(i.name+" "+(i.desc||"")).toLowerCase().includes(q))return false}
+    return true});
+  const so={exp:(a,b)=>(daysLeft(a.expiry)??1e9)-(daysLeft(b.expiry)??1e9),name:(a,b)=>a.name.localeCompare(b.name),qty:(a,b)=>a.qty-b.qty,new:(a,b)=>b.created-a.created}[S.sort];
+  list.sort(so);
+  const stat=(k,cls,n,f)=>`<button class="stat ${cls}" data-filter="${f}" aria-pressed="${S.filter===f}"><span class="label">${t(k)}</span><b>${n}</b></button>`;
+  const hasEx=items.some(i=>i.ex);
+  $("#view-stock").innerHTML=`
+   <div class="stats">${stat("total","",items.length,"")}${stat("expired","bad",counts.bad,"bad")}${stat("soon","warn",counts.warn,"warn")}${stat("okS","ok",counts.ok,"ok")}</div>
+   ${exp.length?`<div class="alert bad" role="alert"><div><b>${esc(t("alertExp")(exp.length))}</b><ul>${exp.map(i=>`<li>${esc(i.name)} · ${fmtDate(i.expiry)}</li>`).join("")}</ul></div></div>`:""}
+   ${soon.length?`<div class="alert" role="status"><div><b>${esc(t("alertSoon")(soon.length))}</b><ul>${soon.slice(0,6).map(i=>`<li>${esc(i.name)} · ${esc(expLabel(i))}</li>`).join("")}</ul></div></div>`:""}
+   ${hasEx?`<div class="card" style="flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap"><span class="muted">${t("exNote")}</span><button class="btn small" id="rmEx">${t("removeEx")}</button></div>`:""}
+   <div class="toolbar">
+     <input type="search" id="q" placeholder="${t("search")}" value="${esc(S.q)}" aria-label="${t("search")}">
+     <select id="cat" aria-label="${t("cat")}"><option value="">${t("allCats")}</option>${Object.entries(t("cats")).map(([k,v])=>`<option value="${k}" ${S.cat===k?"selected":""}>${v}</option>`).join("")}</select>
+     <select id="sort" aria-label="sort">${["exp","name","qty","new"].map(k=>`<option value="${k}" ${S.sort===k?"selected":""}>${t("sort"+k[0].toUpperCase()+k.slice(1))}</option>`).join("")}</select>
+   </div>
+   <div class="list">${list.length?list.map(itemHTML).join(""):`<div class="empty">${items.length?t("noMatch"):t("empty")}</div>`}</div>`;
+}
+function itemHTML(i){
+  const st=status(i);
+  const w=i.w!==""&&i.w!=null?`<span class="mono">${esc(i.w)} ${esc(unitL(i.u))}</span>`:"";
+  return `<article class="item exp-${st}" data-id="${i.id}">
+   <div class="thumb">${i.photo?`<img src="${i.photo}" alt="">`:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>`}</div>
+   <div class="info"><div class="name">${esc(i.name)} ${i.ex?`<span class="pill ex">${t("example")}</span>`:""}</div>
+     ${i.desc?`<div class="desc">${esc(i.desc)}</div>`:""}
+     <div class="meta">${w}<span>${esc(t("cats")[i.cat]||"")}</span>${i.expiry?`<span class="mono">${fmtDate(i.expiry)}</span>`:""}<span class="pill ${st}">${esc(expLabel(i))}</span></div></div>
+   <div class="actions"><div class="qty"><button data-act="minus" aria-label="-1">−</button><span>${i.qty}</span><button data-act="plus" aria-label="+1">+</button></div>
+     <button class="btn small ghost" data-act="edit">${t("edit")}</button></div></article>`;
+}
+
+/* ---------- render: suggestions ---------- */
+function sugAmount(s){
+  let n= s.m==="d"? s.q*S.people*S.days : s.m==="p"? s.q*S.people*Math.max(1,S.days/14) : s.q;
+  let u=s.u;
+  if(u==="g"&&n>=1000){n=n/1000;u="kg"}
+  if(s.m==="p"||s.m==="d"){n= (u==="g")? Math.ceil(n/50)*50 : (n<10? Math.ceil(n*2)/2 : Math.ceil(n))}
+  if(!u)return "";
+  return `${String(+n.toFixed(1)).replace(".",",")} ${unitL(u)}`;
+}
+function sugHave(s){const h=S.have[s.id];return (h&&typeof h==="object"?h.v:!!h)||items.some(i=>i.sid===s.id&&i.qty>0)}
+function renderSug(){
+  const all=SUG.flatMap(c=>c.items);const got=all.filter(sugHave).length;const pct=Math.round(got/all.length*100);
+  $("#view-sug").innerHTML=`
+   <h2>${t("tabSug")}</h2>
+   <p class="muted" style="max-width:65ch">${t("sugIntro")}</p>
+   <div class="sug-head">
+     <label class="field"><span>${t("people")}</span><input type="number" id="people" min="1" max="20" value="${S.people}"></label>
+     <label class="field"><span>${t("days")}</span><select id="days">${[3,7,14,30,60,90].map(d=>`<option ${S.days==d?"selected":""}>${d}</option>`).join("")}</select></label>
+     <div style="flex:1;min-width:180px"><span class="label">${t("ready")}: ${got} / ${all.length}</span><div class="progress"><i style="width:${pct}%"></i></div></div>
+   </div>
+   ${SUG.map(c=>{const h=c.items.filter(sugHave).length;return `<div class="cat"><h3>${t("cats")[c.c]} <small>${h}/${c.items.length}</small></h3>
+     ${c.items.map(s=>{const have=sugHave(s);return `<div class="sug ${have?"have":""}" data-sid="${s.id}">
+       <input type="checkbox" class="chk" id="chk-${s.id}" ${have?"checked":""} aria-label="${t("have")}">
+       <label for="chk-${s.id}"><div class="n">${esc(s[S.lang])}</div>${s["n"+S.lang]?`<div class="note">${esc(s["n"+S.lang])}${s.m==="d"?` · ${s.q} ${unitL(s.u)} ${t("perPD")}`:""}</div>`:(s.m==="d"?`<div class="note">${s.q} ${unitL(s.u)} ${t("perPD")}</div>`:"")}</label>
+       <div class="amt">${sugAmount(s)}</div>
+       <button class="btn small add" data-add="${s.id}">${t("addToStock")}</button></div>`}).join("")}</div>`}).join("")}`;
+}
+
+/* ---------- render: settings ---------- */
+function notifState(){if(!("Notification" in window)||inFrame)return"unsupported";return Notification.permission}
+function renderSet(){setTimeout(renderSyncStatus,0);
+  const ns=notifState();
+  $("#view-set").innerHTML=`<h2 style="margin-bottom:14px">${t("settings")}</h2>
+   <div class="card"><h3>${t("notif")}</h3>
+     <label class="field"><span>${t("warnDays")}</span><select id="warnDays" style="max-width:200px">${[7,14,30,60,90].map(d=>`<option ${S.warnDays==d?"selected":""}>${d}</option>`).join("")}</select></label>
+     <p class="muted" style="margin:0">${t("notifHelp")}</p>
+     <p style="margin:0"><b>${t("notifState")[ns]}</b></p>
+     ${ns==="default"?`<div><button class="btn primary" id="notifBtn">${t("notifOn")}</button></div>`:""}
+   </div>
+   <div class="card" id="syncCard"><h3>${t("sync")}</h3><p style="margin:0" id="syStatus"></p></div>
+   <div class="card"><h3>${t("backup")}</h3><p class="muted" style="margin:0">${t("backupHelp")}</p>
+     <div class="row"><button class="btn" id="expBtn">${t("exportB")}</button>
+       <label class="btn" for="impFile">${t("importB")}</label><input type="file" id="impFile" accept=".json,application/json,text/plain" hidden></div>
+     <div id="expOut"></div>
+     <label class="field"><span>${t("pasteHere")}</span><textarea class="code" id="impText"></textarea></label>
+     <div><button class="btn small" id="impTextBtn">${t("doImport")}</button></div>
+   </div>
+   <div class="card"><div><button class="btn danger" id="wipeBtn">${t("wipe")}</button></div></div>`;
+}
+
+/* ---------- modals ---------- */
+function closeModal(){$("#modal").innerHTML=""}
+function confirmBox(msg,yes,fn){
+  $("#modal").innerHTML=`<div class="scrim"><div class="dialog" role="dialog" aria-modal="true"><p style="margin:0;font-size:17px">${esc(msg)}</p><footer><button class="btn" id="cNo">${t("cancel")}</button><button class="btn danger" id="cYes">${esc(yes)}</button></footer></div></div>`;
+  $("#cNo").onclick=closeModal;$("#cYes").onclick=()=>{closeModal();fn()};$("#cYes").focus();
+}
+let draftPhoto="";
+function openForm(it,preset){
+  const isNew=!it; it=it||{id:uid(),name:"",desc:"",w:"",u:"g",qty:1,expiry:"",cat:"food",photo:"",created:Date.now(),...preset};
+  draftPhoto=it.photo||"";
+  $("#modal").innerHTML=`<div class="scrim"><form class="dialog" id="f" role="dialog" aria-modal="true" novalidate>
+   <header><h2>${isNew?t("newItem"):t("editItem")}</h2><button type="button" class="btn ghost small" id="fx" aria-label="${t("close")}">✕</button></header>
+   <div class="photo"><div class="thumb" id="ph">${draftPhoto?`<img src="${draftPhoto}" alt="">`:""}</div>
+     <div class="row" style="flex-direction:column;align-items:flex-start"><label class="btn" for="phIn">${t("takePhoto")}</label>
+       <input type="file" id="phIn" accept="image/*" capture="environment" hidden>
+       <button type="button" class="btn small ghost" id="phRm" ${draftPhoto?"":"hidden"}>${t("removePhoto")}</button></div></div>
+   <label class="field"><span>${t("name")} *</span><input type="text" id="fName" value="${esc(it.name)}" required></label>
+   <label class="field"><span>${t("desc")}</span><textarea id="fDesc" rows="2">${esc(it.desc)}</textarea></label>
+   <div class="grid2">
+     <div class="field"><span>${t("weight")}</span><div class="grid3"><input type="number" id="fW" step="any" min="0" inputmode="decimal" value="${esc(it.w)}" aria-label="${t("weight")}"><select id="fU" aria-label="${t("unit")}">${UNITS.map(u=>`<option value="${u}" ${it.u===u?"selected":""}>${unitL(u)}</option>`).join("")}</select></div></div>
+     <label class="field"><span>${t("qty")}</span><input type="number" id="fQ" min="0" step="1" inputmode="numeric" value="${it.qty}"></label>
+     <label class="field"><span>${t("expiry")}</span><input type="date" id="fE" value="${esc(it.expiry)}"></label>
+     <label class="field"><span>${t("cat")}</span><select id="fC">${Object.entries(t("cats")).map(([k,v])=>`<option value="${k}" ${it.cat===k?"selected":""}>${v}</option>`).join("")}</select></label>
+   </div>
+   <p id="fErr" style="color:var(--bad);margin:0" hidden>${t("required")}</p>
+   <footer>${isNew?"":`<button type="button" class="btn danger" id="fDel" style="margin-right:auto">${t("del")}</button>`}
+     <button type="button" class="btn" id="fCancel">${t("cancel")}</button><button class="btn primary" type="submit">${t("save")}</button></footer>
+  </form></div>`;
+  $("#fx").onclick=$("#fCancel").onclick=closeModal;
+  $("#phIn").onchange=async e=>{const f=e.target.files[0];if(!f)return;draftPhoto=await shrink(f);if(!$("#ph"))return;$("#ph").innerHTML=`<img src="${draftPhoto}" alt="">`;$("#phRm").hidden=false};
+  $("#phRm").onclick=()=>{draftPhoto="";$("#ph").innerHTML="";$("#phRm").hidden=true};
+  if(!isNew)$("#fDel").onclick=()=>confirmBox(t("confirmDel"),t("yesDel"),()=>{items=items.filter(x=>x.id!==it.id);dbDel(it.id);cloudDel(it);toast(t("deleted"));render()});
+  $("#f").onsubmit=e=>{e.preventDefault();const name=$("#fName").value.trim();if(!name){$("#fErr").hidden=false;$("#fName").focus();return}
+    const n={...it,name,desc:$("#fDesc").value.trim(),w:$("#fW").value===""?"":+$("#fW").value,u:$("#fU").value,qty:Math.max(0,parseInt($("#fQ").value||"0",10)),expiry:$("#fE").value,cat:$("#fC").value,photo:draftPhoto,ex:false,updated:Date.now(),photoId:draftPhoto?(draftPhoto===it.photo&&it.photoId?it.photoId:uid()):""};
+    const idx=items.findIndex(x=>x.id===n.id);if(idx>=0)items[idx]=n;else items.push(n);dbPut(n);cloudSave(n);closeModal();toast(t("saved"));render()};
+  if(isNew)setTimeout(()=>$("#fName").focus(),30);
+}
+function shrink(file){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const M=640;let {width:w,height:h}=img;const k=Math.min(1,M/Math.max(w,h));w=Math.round(w*k);h=Math.round(h*k);const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);let q=.75,u=c.toDataURL("image/jpeg",q);while(u.length>200000&&q>.3){q-=.1;u=c.toDataURL("image/jpeg",q)}res(u)};img.onerror=()=>res("");img.src=r.result};r.onerror=()=>res("");r.readAsDataURL(file)})}
+
+/* ---------- import/export ---------- */
+function doImport(txt){
+  try{const d=JSON.parse(txt);const arr=Array.isArray(d)?d:d.items;if(!Array.isArray(arr))throw 0;
+    let n=0;arr.forEach(x=>{if(!x||!x.name)return;const it={id:x.id||uid(),name:String(x.name),desc:x.desc||"",w:x.w??"",u:UNITS.includes(x.u)?x.u:"g",qty:+x.qty||0,expiry:/^\d{4}-\d\d-\d\d$/.test(x.expiry||"")?x.expiry:"",cat:x.cat||"other",photo:typeof x.photo==="string"&&x.photo.startsWith("data:image")?x.photo:"",created:x.created||Date.now(),sid:x.sid,updated:Date.now()};it.photoId=it.photo?uid():"";
+      const i=items.findIndex(y=>y.id===it.id);if(i>=0)items[i]=it;else items.push(it);dbPut(it);cloudSave(it);n++});
+    if(d.have)Object.assign(S.have,d.have);saveSettings();cloudSettings();toast(t("imported")(n));render()}
+  catch(e){toast(t("badFile"))}
+}
+
+/* ---------- Claude account sync (db capability) ---------- */
+const cloud={on:false,state:"local",C:null,P:null,SET:null,photos:new Set(),confirmed:false};
+let wq=Promise.resolve();
+function cloudWrite(fn){wq=wq.then(fn).then(()=>{if(cloud.state!=="on"&&cloud.confirmed){cloud.state="on";renderSyncStatus()}}).catch(e=>{const c=e&&e.code;
+  if(c==="invalid_argument"&&!cloud.confirmed){cloud.on=false;cloud.state="local"}else cloud.state=c==="quota_exceeded"?"full":"err";
+  if(c==="quota_exceeded")toast(t("cloudFull"));renderSyncStatus()});return wq}
+const plain=o=>JSON.parse(JSON.stringify(o));
+function cloudSave(it){if(!cloud.on||it.ex)return;const {photo,...rest}=it;
+  cloudWrite(async()=>{if(photo&&it.photoId&&!cloud.photos.has(it.photoId)){await cloud.P.doc(it.photoId).set({d:photo});cloud.photos.add(it.photoId)}
+    await cloud.C.doc(it.id).set(plain(rest))})}
+function cloudDel(it){if(!cloud.on||it.ex)return;cloudWrite(async()=>{await cloud.C.doc(it.id).delete();if(it.photoId)await cloud.P.doc(it.photoId).delete()})}
+const qtyTimers={};
+function cloudQty(it){if(!cloud.on||it.ex)return;clearTimeout(qtyTimers[it.id]);qtyTimers[it.id]=setTimeout(()=>{const {photo,...rest}=it;cloudWrite(()=>cloud.C.doc(it.id).set(plain(rest)))},900)}
+let setTimer=null;
+function cloudSettings(){if(!cloud.on)return;clearTimeout(setTimer);setTimer=setTimeout(()=>cloudWrite(()=>cloud.SET.set(plain({have:S.have,cfg:{people:S.people,days:S.days,warnDays:S.warnDays,t:S.cfgT||0}}))),900)}
+function renderSyncStatus(){const el=$("#syStatus");if(!el)return;
+  const m={on:["cloudOn","var(--ok)"],wait:["cloudWait","var(--muted)"],err:["cloudErr","var(--warn)"],full:["cloudFull","var(--bad)"]}[cloud.on?cloud.state:""]||["cloudLocal","var(--muted)"];
+  el.textContent=t(m[0]);el.style.color=m[1]}
+function safeRender(){if(!$("#modal").innerHTML&&!["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName))render();else renderSyncStatus()}
+async function cloudInit(){
+  if(!window.claude||typeof window.claude.use!=="function")return;
+  let db=null,user=null;try{[db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")])}catch(e){}
+  if(!db||!user)return;
+  let uid=null;try{uid=await user.id()}catch(e){}
+  if(!uid)return;
+  let can=null;try{can=await user.can("data.write")}catch(e){}
+  if(can===false)return;
+  const base=db.doc(`data/users/${uid}/stock/main`);
+  Object.assign(cloud,{on:true,state:"wait",C:base.collection("items"),P:base.collection("photos"),SET:db.doc(`data/users/${uid}/settings/main`)});
+  renderSyncStatus();
+  // first time on this device: upload what was entered here before sync existed
+  const mk="rezerva.migrated."+uid;let migrated=false;try{migrated=localStorage.getItem(mk)==="1"}catch(e){}
+  if(!migrated){items.filter(i=>!i.ex).forEach(cloudSave);if(Object.keys(S.have).length)cloudSettings();
+    wq.then(()=>{if(cloud.on)try{localStorage.setItem(mk,"1")}catch(e){}})}
+  const timer=setTimeout(()=>{if(cloud.state==="wait"){cloud.state="err";renderSyncStatus()}},10000);
+  const fetching=new Set();
+  cloud.C.onSnapshot(snap=>{
+    if(!snap.metadata.fromCache){clearTimeout(timer);cloud.confirmed=true;if(cloud.state==="wait"||cloud.state==="err")cloud.state="on"}
+    const photoById={};items.forEach(i=>{if(i.photoId&&i.photo)photoById[i.photoId]=i.photo});
+    const list=snap.docs.map(d=>{const it={...d.data(),id:d.id};it.photo=it.photoId?(photoById[it.photoId]||""):"";return it});
+    const ids=new Set(list.map(i=>i.id));
+    // until the server confirms, keep local items whose upload is still pending
+    const pendingLocal=snap.metadata.fromCache?items.filter(i=>!i.ex&&!ids.has(i.id)):[];
+    items=[...list,...pendingLocal,...(list.length?[]:items.filter(i=>i.ex))];
+    dbClear();items.forEach(dbPut);
+    list.forEach(it=>{if(it.photoId&&!it.photo&&!fetching.has(it.photoId)){fetching.add(it.photoId);
+      cloud.P.doc(it.photoId).get().then(ps=>{fetching.delete(it.photoId);const d=ps.exists&&ps.data().d;if(!d)return;
+        cloud.photos.add(it.photoId);items.filter(x=>x.photoId===it.photoId).forEach(x=>{x.photo=d;dbPut(x)});safeRender()}).catch(()=>fetching.delete(it.photoId))}
+      else if(it.photo)cloud.photos.add(it.photoId)});
+    safeRender();checkNotify();
+  },e=>{clearTimeout(timer);cloud.state=e&&e.code==="quota_exceeded"?"full":"err";renderSyncStatus()});
+  cloud.SET.onSnapshot(sn=>{if(!sn.exists)return;const d=sn.data();
+    if(d.have)S.have={...d.have};
+    if(d.cfg&&(d.cfg.t||0)>(S.cfgT||0)){S.people=d.cfg.people;S.days=d.cfg.days;S.warnDays=d.cfg.warnDays;S.cfgT=d.cfg.t}
+    saveSettings();safeRender()},()=>{});
+}
+
+/* ---------- notifications ---------- */
+function checkNotify(){
+  const due=items.filter(i=>!i.ex&&(status(i)==="warn"||status(i)==="bad"));
+  if(!due.length||notifState()!=="granted")return;
+  const key="rezerva.lastNotif";let last="";try{last=localStorage.getItem(key)||""}catch(e){}
+  if(last===todayISO())return;
+  const body=due.slice(0,5).map(i=>`${i.name}: ${expLabel(i)}`).join("\n");
+  try{ if(navigator.serviceWorker&&navigator.serviceWorker.controller){navigator.serviceWorker.ready.then(r=>r.showNotification(t("notifTitle"),{body,icon:"icon.svg",tag:"rezerva"}))} else new Notification(t("notifTitle"),{body}); localStorage.setItem(key,todayISO())}catch(e){}
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.lang){S.lang=b.dataset.lang;saveSettings();render();return}
+  if(b.dataset.view){S.view=b.dataset.view;saveSettings();render();window.scrollTo(0,0);return}
+  if(b.id==="fab"){openForm();return}
+  if(b.dataset.filter!==undefined&&b.classList.contains("stat")){S.filter=S.filter===b.dataset.filter?"":b.dataset.filter;render();return}
+  if(b.id==="rmEx"){items.filter(i=>i.ex).forEach(i=>dbDel(i.id));items=items.filter(i=>!i.ex);render();return}
+  const art=b.closest(".item");
+  if(art){const it=items.find(i=>i.id===art.dataset.id);if(!it)return;
+    if(b.dataset.act==="edit")openForm(it);
+    if(b.dataset.act==="plus"||b.dataset.act==="minus"){it.qty=Math.max(0,it.qty+(b.dataset.act==="plus"?1:-1));if(!it.ex){it.updated=Date.now();cloudQty(it)}dbPut(it);art.querySelector(".qty span").textContent=it.qty}
+    return}
+  if(b.dataset.add){const s=SUG.flatMap(c=>c.items).find(x=>x.id===b.dataset.add);const cat=SUG.find(c=>c.items.includes(s)).c;
+    openForm(null,{name:s[S.lang],desc:s["n"+S.lang]||"",cat,sid:s.id,u:UNITS.includes(s.u)?s.u:"kom"});return}
+  if(b.id==="notifBtn"){try{Notification.requestPermission().then(()=>{render();checkNotify()})}catch(e){}return}
+  if(b.id==="expBtn"){const data=JSON.stringify({app:"rezerva",v:1,exported:new Date().toISOString(),have:S.have,items:items.filter(i=>!i.ex)});
+    if(!inFrame){try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:"application/json"}));a.download=`rezerva-${todayISO()}.json`;a.click();return}catch(e){}}
+    $("#expOut").innerHTML=`<p class="muted" style="margin:0 0 6px">${t("exportHelp")}</p><textarea class="code" id="expTa" readonly></textarea><div style="margin-top:6px"><button class="btn small" id="copyBtn">${t("copy")}</button></div>`;$("#expTa").value=data;return}
+  if(b.id==="copyBtn"){const ta=$("#expTa");const done=()=>toast(t("copied"));try{navigator.clipboard.writeText(ta.value).then(done,()=>{ta.select()})}catch(e){ta.select()}return}
+  if(b.id==="impTextBtn"){const v=$("#impText").value.trim();if(v)doImport(v);return}
+  if(b.id==="wipeBtn"){confirmBox(t("wipeQ"),t("wipe"),()=>{items.filter(i=>!i.ex).forEach(cloudDel);items=[];dbClear();Object.keys(S.have).forEach(k=>S.have[k]={v:false,t:Date.now()});cloudSettings();S.seeded=true;saveSettings();toast(t("wiped"));render()});return}
+});
+document.addEventListener("input",e=>{
+  if(e.target.id==="q"){S.q=e.target.value;const pos=e.target.selectionStart;renderStock();const q=$("#q");q.focus();q.setSelectionRange(pos,pos)}
+});
+document.addEventListener("change",e=>{
+  const id=e.target.id;
+  if(id==="cat"){S.cat=e.target.value;saveSettings();renderStock()}
+  if(id==="sort"){S.sort=e.target.value;saveSettings();renderStock()}
+  if(id==="people"){S.people=Math.min(20,Math.max(1,parseInt(e.target.value||"1",10)));S.cfgT=Date.now();saveSettings();cloudSettings();renderSug()}
+  if(id==="days"){S.days=+e.target.value;S.cfgT=Date.now();saveSettings();cloudSettings();renderSug()}
+  if(id==="warnDays"){S.warnDays=+e.target.value;S.cfgT=Date.now();saveSettings();cloudSettings()}
+  if(e.target.classList.contains("chk")){const sid=e.target.closest(".sug").dataset.sid;S.have[sid]={v:e.target.checked,t:Date.now()};saveSettings();cloudSettings();renderSug()}
+  if(id==="impFile"){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>doImport(r.result);r.readAsText(f)}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#modal").innerHTML)closeModal()});
+
+/* ---------- boot ---------- */
+(async()=>{
+  await openDB();
+  const stored=await dbAll();
+  items=stored||[];
+  if(!items.length&&!S.seeded){items=seed();items.forEach(dbPut);S.seeded=true;saveSettings()}
+  render();checkNotify();cloudInit();
+  if(!inFrame&&navigator.storage&&navigator.storage.persist){try{navigator.storage.persist()}catch(e){}}
+  setInterval(()=>{if(S.view==="stock"&&!$("#modal").innerHTML&&document.activeElement?.id!=="q")renderStock();checkNotify()},3600000);
+  if("serviceWorker" in navigator&&!inFrame&&location.protocol.startsWith("http")){try{navigator.serviceWorker.register("sw.js")}catch(e){}}
+})();
+})();
+</script>
+</body></html>
