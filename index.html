@@ -154,7 +154,7 @@ bs:{app:"Rezerva hrane Mehanović",tabStock:"Zaliha",tabSug:"Prijedlozi",tabSet:
  total:"Proizvoda",expired:"Isteklo",soon:"Uskoro ističe",okS:"U redu",search:"Pretraži…",allCats:"Sve kategorije",
  sortExp:"Po datumu isteka",sortName:"Po nazivu",sortQty:"Po količini",sortNew:"Najnovije",
  name:"Naziv proizvoda",desc:"Opis",weight:"Gramaža / zapremina",unit:"Jedinica",qty:"Količina (komada)",expiry:"Rok trajanja",cat:"Kategorija",photo:"Slika proizvoda",
- takePhoto:"Uslikaj / odaberi sliku",removePhoto:"Ukloni sliku",save:"Spremi",cancel:"Odustani",del:"Obriši",edit:"Uredi",newItem:"Novi proizvod",editItem:"Uredi proizvod",
+ takePhoto:"📷 Uslikaj",pickPhoto:"🖼 Iz galerije",removePhoto:"Ukloni sliku",save:"Spremi",cancel:"Odustani",del:"Obriši",edit:"Uredi",newItem:"Novi proizvod",editItem:"Uredi proizvod",
  confirmDel:"Obrisati ovaj proizvod?",yesDel:"Da, obriši",
  daysLeft:n=>n===0?"ističe danas":n===1?"još 1 dan":`još ${n} dana`, daysAgo:n=>n===1?"isteklo prije 1 dan":`isteklo prije ${n} dana`, noExp:"bez roka",
  alertSoon:n=>`${n} ${n===1?"proizvod uskoro ističe":"proizvoda uskoro ističe"}. Iskoristite ih prvo i kupite zamjenu.`,
@@ -176,7 +176,7 @@ fr:{app:"Rezerva hrane Mehanović",tabStock:"Stock",tabSug:"Suggestions",tabSet:
  total:"Produits",expired:"Périmés",soon:"Bientôt périmés",okS:"En ordre",search:"Rechercher…",allCats:"Toutes catégories",
  sortExp:"Par date de péremption",sortName:"Par nom",sortQty:"Par quantité",sortNew:"Les plus récents",
  name:"Nom du produit",desc:"Description",weight:"Poids / volume",unit:"Unité",qty:"Quantité (pièces)",expiry:"Date de péremption",cat:"Catégorie",photo:"Photo du produit",
- takePhoto:"Prendre / choisir une photo",removePhoto:"Retirer la photo",save:"Enregistrer",cancel:"Annuler",del:"Supprimer",edit:"Modifier",newItem:"Nouveau produit",editItem:"Modifier le produit",
+ takePhoto:"📷 Prendre une photo",pickPhoto:"🖼 Depuis la galerie",removePhoto:"Retirer la photo",save:"Enregistrer",cancel:"Annuler",del:"Supprimer",edit:"Modifier",newItem:"Nouveau produit",editItem:"Modifier le produit",
  confirmDel:"Supprimer ce produit ?",yesDel:"Oui, supprimer",
  daysLeft:n=>n===0?"périme aujourd'hui":n===1?"encore 1 jour":`encore ${n} jours`, daysAgo:n=>n===1?"périmé depuis 1 jour":`périmé depuis ${n} jours`, noExp:"sans date",
  alertSoon:n=>`${n} produit${n>1?"s":""} bientôt périmé${n>1?"s":""}. Consommez-les d'abord et rachetez-en.`,
@@ -414,8 +414,8 @@ function openForm(it,preset){
   $("#modal").innerHTML=`<div class="scrim"><form class="dialog" id="f" role="dialog" aria-modal="true" novalidate>
    <header><h2>${isNew?t("newItem"):t("editItem")}</h2><button type="button" class="btn ghost small" id="fx" aria-label="${t("close")}">✕</button></header>
    <div class="photo"><div class="thumb" id="ph">${draftPhoto?`<img src="${draftPhoto}" alt="">`:""}</div>
-     <div class="row" style="flex-direction:column;align-items:flex-start"><label class="btn" for="phIn">${t("takePhoto")}</label>
-       <input type="file" id="phIn" accept="image/*" capture="environment" hidden>
+     <div class="row" style="flex-direction:column;align-items:flex-start"><div class="row"><label class="btn" for="phIn">${t("takePhoto")}</label><label class="btn" for="phPick">${t("pickPhoto")}</label></div>
+       <input type="file" id="phIn" accept="image/*" capture="environment" hidden><input type="file" id="phPick" accept="image/*" hidden>
        <button type="button" class="btn small ghost" id="phRm" ${draftPhoto?"":"hidden"}>${t("removePhoto")}</button></div></div>
    <label class="field"><span>${t("name")} *</span><input type="text" id="fName" value="${esc(it.name)}" required></label>
    <label class="field"><span>${t("desc")}</span><textarea id="fDesc" rows="2">${esc(it.desc)}</textarea></label>
@@ -430,7 +430,7 @@ function openForm(it,preset){
      <button type="button" class="btn" id="fCancel">${t("cancel")}</button><button class="btn primary" type="submit">${t("save")}</button></footer>
   </form></div>`;
   $("#fx").onclick=$("#fCancel").onclick=closeModal;
-  $("#phIn").onchange=async e=>{const f=e.target.files[0];if(!f)return;draftPhoto=await shrink(f);if(!$("#ph"))return;$("#ph").innerHTML=`<img src="${draftPhoto}" alt="">`;$("#phRm").hidden=false};
+  $("#phIn").onchange=$("#phPick").onchange=async e=>{const f=e.target.files[0];if(!f)return;draftPhoto=await shrink(f);if(!$("#ph"))return;$("#ph").innerHTML=`<img src="${draftPhoto}" alt="">`;$("#phRm").hidden=false};
   $("#phRm").onclick=()=>{draftPhoto="";$("#ph").innerHTML="";$("#phRm").hidden=true};
   if(!isNew)$("#fDel").onclick=()=>confirmBox(t("confirmDel"),t("yesDel"),()=>{items=items.filter(x=>x.id!==it.id);dbDel(it.id);cloudDel(it);toast(t("deleted"));render()});
   $("#f").onsubmit=e=>{e.preventDefault();const name=$("#fName").value.trim();if(!name){$("#fErr").hidden=false;$("#fName").focus();return}
