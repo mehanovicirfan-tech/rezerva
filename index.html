@@ -56,12 +56,21 @@ h3{font-size:17px;font-weight:600}
 .btn.danger{color:var(--bad);border-color:var(--bad)}
 .btn.small{padding:5px 10px;font-size:14px}
 .btn.ghost{border-color:transparent;background:none}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;cursor:pointer;text-align:left}
 .stat[aria-pressed="true"]{outline:2px solid var(--accent)}
 .stat b{display:block;font:800 28px/1.1 var(--f-display);font-variant-numeric:tabular-nums}
 .stat.bad b{color:var(--bad)} .stat.warn b{color:var(--warn)} .stat.ok b{color:var(--ok)}
-@media (max-width:560px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stats .stat:first-child{grid-column:1 / -1}}
+.stat.charge b{color:var(--accent)}
+.alert.charge{background:var(--accent-soft);border-color:var(--accent)}
+.pill.c-ok{background:var(--accent-soft);color:var(--accent)}
+.sug .sugbtns{display:flex;gap:2px;align-items:center}
+.sug .add{white-space:nowrap}
+.sug .x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px 6px;border-radius:6px}
+.cat-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.cat-head h3{margin:0}
+.charge-box{border:1px dashed var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
 .alert{display:flex;gap:12px;align-items:flex-start;background:var(--warn-soft);border:1px solid var(--warn);border-radius:var(--r);padding:12px 14px;margin-bottom:16px}
 .alert.bad{background:var(--bad-soft);border-color:var(--bad)}
 .alert ul{margin:4px 0 0;padding-left:18px}
@@ -89,7 +98,7 @@ input[type=text],input[type=number],input[type=date],input[type=search],select,t
 @media (max-width:560px){
   .item{grid-template-columns:60px minmax(0,1fr);gap:10px}
   .thumb{width:60px;height:60px}
-  .item .actions{grid-column:1 / -1;flex-direction:row;justify-content:space-between;align-items:center}
+  .item .actions{grid-column:1 / -1;flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap}
 }
 .empty{text-align:center;padding:40px 16px;border:2px dashed var(--line);border-radius:var(--r);color:var(--muted)}
 .fab{position:fixed;right:max(20px,calc(env(safe-area-inset-right,0px) + 16px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:6;border-radius:999px;padding:14px 22px;font-size:17px;box-shadow:0 6px 18px rgb(0 0 0 / .25)}
@@ -117,7 +126,7 @@ input[type=text],input[type=number],input[type=date],input[type=search],select,t
 .sug .n{font-weight:700}
 .sug .note{font-size:13px;color:var(--muted)}
 .sug .amt{font:600 14px var(--f-mono);white-space:nowrap;text-align:right}
-@media (max-width:560px){.sug{grid-template-columns:28px minmax(0,1fr) auto}.sug .add{grid-column:2 / -1;justify-self:start}}
+@media (max-width:560px){.sug{grid-template-columns:28px minmax(0,1fr) auto}.sug .sugbtns{grid-column:2 / -1;justify-self:start}}
 .progress{height:8px;border-radius:99px;background:var(--sunk);overflow:hidden;margin-top:6px}
 .progress i{display:block;height:100%;background:var(--ok)}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
@@ -161,7 +170,7 @@ textarea.code{font:12px var(--f-mono);height:140px}
 "use strict";
 /* ---------- i18n ---------- */
 const T = {
-bs:{app:"Rezerva hrane Mehanović",tabStock:"Zaliha",tabSug:"Prijedlozi",tabSet:"Postavke",theme:"Tema",thAuto:"Automatski",thLight:"Svijetla",thDark:"Tamna",thHelp:"Automatski prati postavku telefona ili računara.",toDark:"Prebaci na tamnu temu",toLight:"Prebaci na svijetlu temu",add:"+ Dodaj proizvod",
+bs:{app:"Rezerva hrane Mehanović",tabStock:"Zaliha",tabSug:"Prijedlozi",tabSet:"Postavke",addSug:"+ Dodaj stavku",newSug:"Nova stavka u prijedlozima",sugAmt:"Količina",note:"Napomena",delSug:"Ukloni stavku",sugAdded:"Stavka dodana",mine:"moje",charged:"Datum zadnjeg punjenja",chargeEvery:"Puniti svakih (dana)",chargeHelp:"Za uređaje na punjive baterije (lampa, powerbank, radio). Ostavite datum prazan ako ne treba.",chargeIn:n=>n===0?"puniti danas":n===1?"punjenje za 1 dan":`punjenje za ${n} dana`,chargeLate:n=>n===1?"punjenje kasni 1 dan":`punjenje kasni ${n} dana`,chargedNow:"⚡ Napunjeno",chargeS:"Za punjenje",alertCharge:n=>`${n} ${n===1?"uređaj treba dopuniti":"uređaja treba dopuniti"}. Dopunite ih i pritisnite "Napunjeno".`,chargedToast:"Punjenje zabilježeno",theme:"Tema",thAuto:"Automatski",thLight:"Svijetla",thDark:"Tamna",thHelp:"Automatski prati postavku telefona ili računara.",toDark:"Prebaci na tamnu temu",toLight:"Prebaci na svijetlu temu",add:"+ Dodaj proizvod",
  total:"Proizvoda",expired:"Isteklo",soon:"Uskoro ističe",okS:"U redu",search:"Pretraži…",allCats:"Sve kategorije",
  sortExp:"Po datumu isteka",sortName:"Po nazivu",sortQty:"Po količini",sortNew:"Najnovije",
  name:"Naziv proizvoda",desc:"Opis",weight:"Gramaža / zapremina",unit:"Jedinica",qty:"Količina (komada)",expiry:"Rok trajanja",cat:"Kategorija",photo:"Slika proizvoda",
@@ -183,7 +192,7 @@ bs:{app:"Rezerva hrane Mehanović",tabStock:"Zaliha",tabSug:"Prijedlozi",tabSet:
  wipe:"Obriši sve podatke",wipeQ:"Obrisati sve proizvode s ovog uređaja? Ovo se ne može poništiti.",wiped:"Svi podaci obrisani",saved:"Spremljeno",deleted:"Obrisano",
  notifTitle:"Rezerva hrane Mehanović: provjerite rokove",close:"Zatvori",required:"Upišite naziv proizvoda.",
  cats:{food:"Hrana",water:"Voda i piće",med:"Prva pomoć i lijekovi",hyg:"Higijena",energy:"Svjetlo, energija i vatra",tools:"Alat i oprema",docs:"Dokumenti i novac",other:"Ostalo"}},
-fr:{app:"Rezerva hrane Mehanović",tabStock:"Stock",tabSug:"Suggestions",tabSet:"Réglages",theme:"Thème",thAuto:"Automatique",thLight:"Clair",thDark:"Sombre",thHelp:"Automatique suit le réglage du téléphone ou de l'ordinateur.",toDark:"Passer au thème sombre",toLight:"Passer au thème clair",add:"+ Ajouter un produit",
+fr:{app:"Rezerva hrane Mehanović",tabStock:"Stock",tabSug:"Suggestions",tabSet:"Réglages",addSug:"+ Ajouter un élément",newSug:"Nouvel élément de la liste",sugAmt:"Quantité",note:"Remarque",delSug:"Retirer l'élément",sugAdded:"Élément ajouté",mine:"perso",charged:"Date de la dernière recharge",chargeEvery:"Recharger tous les (jours)",chargeHelp:"Pour les appareils à batterie rechargeable (lampe, batterie externe, radio). Laissez la date vide si inutile.",chargeIn:n=>n===0?"à recharger aujourd'hui":n===1?"recharge dans 1 jour":`recharge dans ${n} jours`,chargeLate:n=>n===1?"recharge en retard de 1 jour":`recharge en retard de ${n} jours`,chargedNow:"⚡ Rechargé",chargeS:"À recharger",alertCharge:n=>`${n} appareil${n>1?"s":""} à recharger. Rechargez-les puis appuyez sur « Rechargé ».`,chargedToast:"Recharge enregistrée",theme:"Thème",thAuto:"Automatique",thLight:"Clair",thDark:"Sombre",thHelp:"Automatique suit le réglage du téléphone ou de l'ordinateur.",toDark:"Passer au thème sombre",toLight:"Passer au thème clair",add:"+ Ajouter un produit",
  total:"Produits",expired:"Périmés",soon:"Bientôt périmés",okS:"En ordre",search:"Rechercher…",allCats:"Toutes catégories",
  sortExp:"Par date de péremption",sortName:"Par nom",sortQty:"Par quantité",sortNew:"Les plus récents",
  name:"Nom du produit",desc:"Description",weight:"Poids / volume",unit:"Unité",qty:"Quantité (pièces)",expiry:"Date de péremption",cat:"Catégorie",photo:"Photo du produit",
@@ -275,7 +284,7 @@ const SUG=[
 const UNIT_TR={kom:"pce",kut:"boîte",pak:"paquet",rola:"rouleau",par:"paire",doza:"dose"};
 
 /* ---------- state & storage ---------- */
-const S = {lang:"bs",view:"stock",warnDays:30,people:3,days:14,theme:"auto",have:{},q:"",cat:"",sort:"exp",filter:"",seeded:false};
+const S = {lang:"bs",view:"stock",warnDays:30,people:3,days:14,theme:"auto",customSug:[],customT:0,have:{},q:"",cat:"",sort:"exp",filter:"",seeded:false};
 const LS="rezerva.settings.v1";
 try{Object.assign(S,JSON.parse(localStorage.getItem(LS)||"{}"))}catch(e){}
 S.q="";S.filter="";if(!S.v2){S.people=3;S.v2=true}
@@ -298,6 +307,13 @@ function todayISO(){const d=new Date();return d.getFullYear()+"-"+String(d.getMo
 function addDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function daysLeft(iso){if(!iso)return null;const [y,m,d]=iso.split("-").map(Number);const a=new Date(y,m-1,d);const n=new Date();const b=new Date(n.getFullYear(),n.getMonth(),n.getDate());return Math.round((a-b)/86400000)}
 function status(it){const d=daysLeft(it.expiry);if(d===null)return"none";if(d<0)return"bad";if(d<=S.warnDays)return"warn";return"ok"}
+const CHARGE_CATS=["energy","tools"];
+function chargeDays(it){if(!it.charged||!CHARGE_CATS.includes(it.cat))return null;return daysLeft(it.charged)+(+it.chargeEvery||30)}
+function chargeStatus(it){const d=chargeDays(it);if(d===null)return"none";if(d<0)return"bad";if(d<=7)return"warn";return"ok"}
+function chargeLabel(it){const d=chargeDays(it);return d<0?t("chargeLate")(-d):t("chargeIn")(d)}
+const RANK={bad:3,warn:2,ok:1,none:0};
+function worst(it){const a=status(it),b=chargeStatus(it);return RANK[b]>RANK[a]?b:a}
+function chargeDue(it){const c=chargeStatus(it);return c==="bad"||c==="warn"}
 function fmtDate(iso){if(!iso)return"";const [y,m,d]=iso.split("-");return S.lang==="fr"?`${d}/${m}/${y}`:`${d}.${m}.${y}.`}
 function expLabel(it){const d=daysLeft(it.expiry);if(d===null)return t("noExp");return d<0?t("daysAgo")(-d):t("daysLeft")(d)}
 function toast(msg){const el=document.createElement("div");el.className="toast";el.textContent=msg;el.setAttribute("role","status");document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
@@ -310,6 +326,7 @@ function seed(){
    {name:"Riža dugo zrno",desc:"U plastičnoj kanti u podrumu",w:1,u:"kg",qty:3,expiry:addDays(600),cat:"food"},
    {name:"Voda Jana 1,5 L",desc:"Paket od 6 boca",w:1.5,u:"L",qty:12,expiry:addDays(18),cat:"water"},
    {name:"Baterije AA",desc:"Alkalne, za lampu i radio",w:"",u:"kom",qty:8,expiry:addDays(1800),cat:"energy"},
+   {name:"Powerbank 20000 mAh",desc:"Za telefon i čeonu lampu",w:"",u:"kom",qty:1,expiry:"",cat:"energy",charged:addDays(-26),chargeEvery:30},
    {name:"Dvopek",desc:"Otvoreno pakovanje",w:250,u:"g",qty:1,expiry:addDays(-4),cat:"food"}
   ];
   return ex.map((e,i)=>({id:uid()+i,created:Date.now()-i*1000,ex:true,photo:"",...e}));
@@ -339,9 +356,10 @@ function renderStock(){
   const counts={bad:0,warn:0,ok:0,none:0};items.forEach(i=>counts[status(i)]++);
   const soon=items.filter(i=>status(i)==="warn").sort((a,b)=>daysLeft(a.expiry)-daysLeft(b.expiry));
   const exp=items.filter(i=>status(i)==="bad");
+  const chg=items.filter(chargeDue).sort((a,b)=>chargeDays(a)-chargeDays(b));
   let list=items.filter(i=>{
     if(S.cat&&i.cat!==S.cat)return false;
-    if(S.filter&&status(i)!==S.filter)return false;
+    if(S.filter==="charge"){if(!chargeDue(i))return false}else if(S.filter&&status(i)!==S.filter)return false;
     if(S.q){const q=S.q.toLowerCase();if(!(i.name+" "+(i.desc||"")).toLowerCase().includes(q))return false}
     return true});
   const so={exp:(a,b)=>(daysLeft(a.expiry)??1e9)-(daysLeft(b.expiry)??1e9),name:(a,b)=>a.name.localeCompare(b.name),qty:(a,b)=>a.qty-b.qty,new:(a,b)=>b.created-a.created}[S.sort];
@@ -349,9 +367,10 @@ function renderStock(){
   const stat=(k,cls,n,f)=>`<button class="stat ${cls}" data-filter="${f}" aria-pressed="${S.filter===f}"><span class="label">${t(k)}</span><b>${n}</b></button>`;
   const hasEx=items.some(i=>i.ex);
   $("#view-stock").innerHTML=`
-   <div class="stats">${stat("total","",items.length,"")}${stat("expired","bad",counts.bad,"bad")}${stat("soon","warn",counts.warn,"warn")}${stat("okS","ok",counts.ok,"ok")}</div>
+   <div class="stats">${stat("total","",items.length,"")}${stat("expired","bad",counts.bad,"bad")}${stat("soon","warn",counts.warn,"warn")}${stat("chargeS","charge",chg.length,"charge")}${stat("okS","ok",counts.ok,"ok")}</div>
    ${exp.length?`<div class="alert bad" role="alert"><div><b>${esc(t("alertExp")(exp.length))}</b><ul>${exp.map(i=>`<li>${esc(i.name)} · ${fmtDate(i.expiry)}</li>`).join("")}</ul></div></div>`:""}
    ${soon.length?`<div class="alert" role="status"><div><b>${esc(t("alertSoon")(soon.length))}</b><ul>${soon.slice(0,6).map(i=>`<li>${esc(i.name)} · ${esc(expLabel(i))}</li>`).join("")}</ul></div></div>`:""}
+   ${chg.length?`<div class="alert charge" role="status"><div><b>${esc(t("alertCharge")(chg.length))}</b><ul>${chg.slice(0,6).map(i=>`<li>${esc(i.name)} · ${esc(chargeLabel(i))}</li>`).join("")}</ul></div></div>`:""}
    ${hasEx?`<div class="card" style="flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap"><span class="muted">${t("exNote")}</span><button class="btn small" id="rmEx">${t("removeEx")}</button></div>`:""}
    <div class="toolbar">
      <input type="search" id="q" placeholder="${t("search")}" value="${esc(S.q)}" aria-label="${t("search")}">
@@ -361,15 +380,15 @@ function renderStock(){
    <div class="list">${list.length?list.map(itemHTML).join(""):`<div class="empty">${items.length?t("noMatch"):t("empty")}</div>`}</div>`;
 }
 function itemHTML(i){
-  const st=status(i);
+  const st=status(i);const cs=chargeStatus(i);
   const w=i.w!==""&&i.w!=null?`<span class="mono">${esc(i.w)} ${esc(unitL(i.u))}</span>`:"";
-  return `<article class="item exp-${st}" data-id="${i.id}">
+  return `<article class="item exp-${worst(i)}" data-id="${i.id}">
    <div class="thumb">${i.photo?`<img src="${i.photo}" alt="${esc(i.name)}" data-zoom="1" role="button" tabindex="0">`:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>`}</div>
    <div class="info"><div class="name">${esc(i.name)} ${i.ex?`<span class="pill ex">${t("example")}</span>`:""}</div>
      ${i.desc?`<div class="desc">${esc(i.desc)}</div>`:""}
-     <div class="meta">${w}<span>${esc(t("cats")[i.cat]||"")}</span>${i.expiry?`<span class="mono">${fmtDate(i.expiry)}</span>`:""}<span class="pill ${st}">${esc(expLabel(i))}</span></div></div>
+     <div class="meta">${w}<span>${esc(t("cats")[i.cat]||"")}</span>${i.expiry?`<span class="mono">${fmtDate(i.expiry)}</span>`:""}<span class="pill ${st}">${esc(expLabel(i))}</span>${cs!=="none"?`<span class="pill ${cs==="ok"?"c-ok":cs}">${esc(chargeLabel(i))}</span>`:""}</div></div>
    <div class="actions"><div class="qty"><button data-act="minus" aria-label="-1">−</button><span>${i.qty}</span><button data-act="plus" aria-label="+1">+</button></div>
-     <button class="btn small ghost" data-act="edit">${t("edit")}</button></div></article>`;
+     ${CHARGE_CATS.includes(i.cat)&&i.charged?`<button class="btn small" data-act="charged">${t("chargedNow")}</button>`:""}<button class="btn small ghost" data-act="edit">${t("edit")}</button></div></article>`;
 }
 
 /* ---------- render: suggestions ---------- */
@@ -381,9 +400,11 @@ function sugAmount(s){
   if(!u)return "";
   return `${String(+n.toFixed(1)).replace(".",",")} ${unitL(u)}`;
 }
+function customOf(c){return (S.customSug||[]).filter(x=>x.c===c).map(x=>({id:x.id,bs:x.name,fr:x.name,m:"h",q:x.q,u:x.u,nbs:x.note||"",nfr:x.note||"",custom:true}))}
+function sugCats(){return SUG.map(c=>({c:c.c,items:[...c.items,...customOf(c.c)]}))}
 function sugHave(s){const h=S.have[s.id];return (h&&typeof h==="object"?h.v:!!h)||items.some(i=>i.sid===s.id&&i.qty>0)}
 function renderSug(){
-  const all=SUG.flatMap(c=>c.items);const got=all.filter(sugHave).length;const pct=Math.round(got/all.length*100);
+  const cats=sugCats();const all=cats.flatMap(c=>c.items);const got=all.filter(sugHave).length;const pct=Math.round(got/all.length*100);
   $("#view-sug").innerHTML=`
    <h2>${t("tabSug")}</h2>
    <p class="muted" style="max-width:65ch">${t("sugIntro")}</p>
@@ -392,12 +413,12 @@ function renderSug(){
      <label class="field"><span>${t("days")}</span><select id="days">${[3,7,14,30,60,90].map(d=>`<option ${S.days==d?"selected":""}>${d}</option>`).join("")}</select></label>
      <div style="flex:1;min-width:180px"><span class="label">${t("ready")}: ${got} / ${all.length}</span><div class="progress"><i style="width:${pct}%"></i></div></div>
    </div>
-   ${SUG.map(c=>{const h=c.items.filter(sugHave).length;return `<div class="cat"><h3>${t("cats")[c.c]} <small>${h}/${c.items.length}</small></h3>
+   ${cats.map(c=>{const h=c.items.filter(sugHave).length;return `<div class="cat"><div class="cat-head"><h3>${t("cats")[c.c]} <small>${h}/${c.items.length}</small></h3><button class="btn small ghost" data-addsug="${c.c}">${t("addSug")}</button></div>
      ${c.items.map(s=>{const have=sugHave(s);return `<div class="sug ${have?"have":""}" data-sid="${s.id}">
        <input type="checkbox" class="chk" id="chk-${s.id}" ${have?"checked":""} aria-label="${t("have")}">
-       <label for="chk-${s.id}"><div class="n">${esc(s[S.lang])}</div>${s["n"+S.lang]?`<div class="note">${esc(s["n"+S.lang])}${s.m==="d"?` · ${s.q} ${unitL(s.u)} ${t("perPD")}`:""}</div>`:(s.m==="d"?`<div class="note">${s.q} ${unitL(s.u)} ${t("perPD")}</div>`:"")}</label>
+       <label for="chk-${s.id}"><div class="n">${esc(s[S.lang])}${s.custom?` <span class="pill ex">${t("mine")}</span>`:""}</div>${s["n"+S.lang]?`<div class="note">${esc(s["n"+S.lang])}${s.m==="d"?` · ${s.q} ${unitL(s.u)} ${t("perPD")}`:""}</div>`:(s.m==="d"?`<div class="note">${s.q} ${unitL(s.u)} ${t("perPD")}</div>`:"")}</label>
        <div class="amt">${sugAmount(s)}</div>
-       <button class="btn small add" data-add="${s.id}">${t("addToStock")}</button></div>`}).join("")}</div>`}).join("")}`;
+       <div class="sugbtns"><button class="btn small add" data-add="${s.id}">${t("addToStock")}</button>${s.custom?`<button class="x" data-delsug="${s.id}" aria-label="${t("delSug")}" title="${t("delSug")}">✕</button>`:""}</div></div>`}).join("")}</div>`}).join("")}`;
 }
 
 /* ---------- render: settings ---------- */
@@ -429,6 +450,22 @@ function confirmBox(msg,yes,fn){
   $("#modal").innerHTML=`<div class="scrim"><div class="dialog" role="dialog" aria-modal="true"><p style="margin:0;font-size:17px">${esc(msg)}</p><footer><button class="btn" id="cNo">${t("cancel")}</button><button class="btn danger" id="cYes">${esc(yes)}</button></footer></div></div>`;
   $("#cNo").onclick=closeModal;$("#cYes").onclick=()=>{closeModal();fn()};$("#cYes").focus();
 }
+function openSugForm(cat){
+  const units=[...UNITS,"pak","kut","par","rola"];
+  $("#modal").innerHTML=`<div class="scrim"><form class="dialog" id="sf" role="dialog" aria-modal="true" novalidate>
+   <header><h2>${t("newSug")}</h2><button type="button" class="btn ghost small" id="sfx" aria-label="${t("close")}">✕</button></header>
+   <label class="field"><span>${t("name")} *</span><input type="text" id="sName" required></label>
+   <label class="field"><span>${t("cat")}</span><select id="sCat">${SUG.map(c=>`<option value="${c.c}" ${c.c===cat?"selected":""}>${t("cats")[c.c]}</option>`).join("")}</select></label>
+   <div class="field"><span>${t("sugAmt")}</span><div class="grid3"><input type="number" id="sQ" min="0" step="any" inputmode="decimal" value="1" aria-label="${t("sugAmt")}"><select id="sU" aria-label="${t("unit")}">${units.map(u=>`<option value="${u}" ${u==="kom"?"selected":""}>${unitL(u)}</option>`).join("")}</select></div></div>
+   <label class="field"><span>${t("note")}</span><input type="text" id="sNote"></label>
+   <p id="sErr" style="color:var(--bad);margin:0" hidden>${t("required")}</p>
+   <footer><button type="button" class="btn" id="sCancel">${t("cancel")}</button><button class="btn primary" type="submit">${t("save")}</button></footer></form></div>`;
+  $("#sfx").onclick=$("#sCancel").onclick=closeModal;
+  $("#sf").onsubmit=e=>{e.preventDefault();const name=$("#sName").value.trim();if(!name){$("#sErr").hidden=false;$("#sName").focus();return}
+    S.customSug=[...(S.customSug||[]),{id:"c"+uid(),c:$("#sCat").value,name,q:+$("#sQ").value||1,u:$("#sU").value,note:$("#sNote").value.trim()}];
+    S.customT=Date.now();saveSettings();cloudSettings();closeModal();toast(t("sugAdded"));render()};
+  setTimeout(()=>$("#sName").focus(),30);
+}
 let draftPhoto="";
 function openForm(it,preset){
   const isNew=!it; it=it||{id:uid(),name:"",desc:"",w:"",u:"g",qty:1,expiry:"",cat:"food",photo:"",created:Date.now(),...preset};
@@ -447,6 +484,10 @@ function openForm(it,preset){
      <label class="field"><span>${t("expiry")}</span><input type="date" id="fE" value="${esc(it.expiry)}"></label>
      <label class="field"><span>${t("cat")}</span><select id="fC">${Object.entries(t("cats")).map(([k,v])=>`<option value="${k}" ${it.cat===k?"selected":""}>${v}</option>`).join("")}</select></label>
    </div>
+   <div class="charge-box" id="chargeBox" ${CHARGE_CATS.includes(it.cat)?"":"hidden"}>
+     <div class="grid2"><label class="field"><span>${t("charged")}</span><input type="date" id="fCh" value="${esc(it.charged||"")}"></label>
+     <label class="field"><span>${t("chargeEvery")}</span><input type="number" id="fChE" min="1" max="365" step="1" inputmode="numeric" value="${+it.chargeEvery||30}"></label></div>
+     <p class="muted" style="margin:0;font-size:14px">${t("chargeHelp")}</p></div>
    <p id="fErr" style="color:var(--bad);margin:0" hidden>${t("required")}</p>
    <footer>${isNew?"":`<button type="button" class="btn danger" id="fDel" style="margin-right:auto">${t("del")}</button>`}
      <button type="button" class="btn" id="fCancel">${t("cancel")}</button><button class="btn primary" type="submit">${t("save")}</button></footer>
@@ -456,7 +497,7 @@ function openForm(it,preset){
   $("#phRm").onclick=()=>{draftPhoto="";$("#ph").innerHTML="";$("#phRm").hidden=true};
   if(!isNew)$("#fDel").onclick=()=>confirmBox(t("confirmDel"),t("yesDel"),()=>{items=items.filter(x=>x.id!==it.id);dbDel(it.id);cloudDel(it);toast(t("deleted"));render()});
   $("#f").onsubmit=e=>{e.preventDefault();const name=$("#fName").value.trim();if(!name){$("#fErr").hidden=false;$("#fName").focus();return}
-    const n={...it,name,desc:$("#fDesc").value.trim(),w:$("#fW").value===""?"":+$("#fW").value,u:$("#fU").value,qty:Math.max(0,parseInt($("#fQ").value||"0",10)),expiry:$("#fE").value,cat:$("#fC").value,photo:draftPhoto,ex:false,updated:Date.now(),photoId:draftPhoto?(draftPhoto===it.photo&&it.photoId?it.photoId:uid()):""};
+    const n={...it,name,desc:$("#fDesc").value.trim(),w:$("#fW").value===""?"":+$("#fW").value,u:$("#fU").value,qty:Math.max(0,parseInt($("#fQ").value||"0",10)),expiry:$("#fE").value,cat:$("#fC").value,charged:CHARGE_CATS.includes($("#fC").value)?$("#fCh").value:(it.charged||""),chargeEvery:Math.min(365,Math.max(1,parseInt($("#fChE").value||"30",10))),photo:draftPhoto,ex:false,updated:Date.now(),photoId:draftPhoto?(draftPhoto===it.photo&&it.photoId?it.photoId:uid()):""};
     const idx=items.findIndex(x=>x.id===n.id);if(idx>=0)items[idx]=n;else items.push(n);dbPut(n);cloudSave(n);closeModal();toast(t("saved"));render()};
   if(isNew)setTimeout(()=>$("#fName").focus(),30);
 }
@@ -465,9 +506,11 @@ function shrink(file){return new Promise(res=>{const r=new FileReader();r.onload
 /* ---------- import/export ---------- */
 function doImport(txt){
   try{const d=JSON.parse(txt);const arr=Array.isArray(d)?d:d.items;if(!Array.isArray(arr))throw 0;
-    let n=0;arr.forEach(x=>{if(!x||!x.name)return;const it={id:x.id||uid(),name:String(x.name),desc:x.desc||"",w:x.w??"",u:UNITS.includes(x.u)?x.u:"g",qty:+x.qty||0,expiry:/^\d{4}-\d\d-\d\d$/.test(x.expiry||"")?x.expiry:"",cat:x.cat||"other",photo:typeof x.photo==="string"&&x.photo.startsWith("data:image")?x.photo:"",created:x.created||Date.now(),sid:x.sid,updated:Date.now()};it.photoId=it.photo?uid():"";
+    let n=0;arr.forEach(x=>{if(!x||!x.name)return;const it={id:x.id||uid(),name:String(x.name),desc:x.desc||"",w:x.w??"",u:UNITS.includes(x.u)?x.u:"g",qty:+x.qty||0,expiry:/^\d{4}-\d\d-\d\d$/.test(x.expiry||"")?x.expiry:"",cat:x.cat||"other",photo:typeof x.photo==="string"&&x.photo.startsWith("data:image")?x.photo:"",created:x.created||Date.now(),sid:x.sid,updated:Date.now(),charged:/^\d{4}-\d\d-\d\d$/.test(x.charged||"")?x.charged:"",chargeEvery:+x.chargeEvery||30};it.photoId=it.photo?uid():"";
       const i=items.findIndex(y=>y.id===it.id);if(i>=0)items[i]=it;else items.push(it);dbPut(it);cloudSave(it);n++});
-    if(d.have)Object.assign(S.have,d.have);saveSettings();cloudSettings();toast(t("imported")(n));render()}
+    if(d.have)Object.assign(S.have,d.have);
+    if(Array.isArray(d.customSug)){const ids=new Set((S.customSug||[]).map(x=>x.id));S.customSug=[...(S.customSug||[]),...d.customSug.filter(x=>x&&x.id&&x.name&&!ids.has(x.id))];S.customT=Date.now()}
+    saveSettings();cloudSettings();toast(t("imported")(n));render()}
   catch(e){toast(t("badFile"))}
 }
 
@@ -485,7 +528,7 @@ function cloudDel(it){if(!cloud.on||it.ex)return;cloudWrite(async()=>{await clou
 const qtyTimers={};
 function cloudQty(it){if(!cloud.on||it.ex)return;clearTimeout(qtyTimers[it.id]);qtyTimers[it.id]=setTimeout(()=>{const {photo,...rest}=it;cloudWrite(()=>cloud.C.doc(it.id).set(plain(rest)))},900)}
 let setTimer=null;
-function cloudSettings(){if(!cloud.on)return;clearTimeout(setTimer);setTimer=setTimeout(()=>cloudWrite(()=>cloud.SET.set(plain({have:S.have,cfg:{people:S.people,days:S.days,warnDays:S.warnDays,t:S.cfgT||0}}))),900)}
+function cloudSettings(){if(!cloud.on)return;clearTimeout(setTimer);setTimer=setTimeout(()=>cloudWrite(()=>cloud.SET.set(plain({have:S.have,custom:{list:S.customSug||[],t:S.customT||0},cfg:{people:S.people,days:S.days,warnDays:S.warnDays,t:S.cfgT||0}}))),900)}
 function renderSyncStatus(){const el=$("#syStatus");if(!el)return;
   const m={on:["cloudOn","var(--ok)"],wait:["cloudWait","var(--muted)"],err:["cloudErr","var(--warn)"],full:["cloudFull","var(--bad)"]}[cloud.on?cloud.state:""]||["cloudLocal","var(--muted)"];
   el.textContent=t(m[0]);el.style.color=m[1]}
@@ -524,17 +567,18 @@ async function cloudInit(){
   },e=>{clearTimeout(timer);cloud.state=e&&e.code==="quota_exceeded"?"full":"err";renderSyncStatus()});
   cloud.SET.onSnapshot(sn=>{if(!sn.exists)return;const d=sn.data();
     if(d.have)S.have={...d.have};
+    if(d.custom&&(d.custom.t||0)>(S.customT||0)){S.customSug=d.custom.list||[];S.customT=d.custom.t}
     if(d.cfg&&(d.cfg.t||0)>(S.cfgT||0)){S.people=d.cfg.people;S.days=d.cfg.days;S.warnDays=d.cfg.warnDays;S.cfgT=d.cfg.t}
     saveSettings();safeRender()},()=>{});
 }
 
 /* ---------- notifications ---------- */
 function checkNotify(){
-  const due=items.filter(i=>!i.ex&&(status(i)==="warn"||status(i)==="bad"));
+  const due=items.filter(i=>!i.ex&&(status(i)==="warn"||status(i)==="bad"||chargeDue(i)));
   if(!due.length||notifState()!=="granted")return;
   const key="rezerva.lastNotif";let last="";try{last=localStorage.getItem(key)||""}catch(e){}
   if(last===todayISO())return;
-  const body=due.slice(0,5).map(i=>`${i.name}: ${expLabel(i)}`).join("\n");
+  const body=due.slice(0,5).map(i=>`${i.name}: ${chargeDue(i)&&!(status(i)==="warn"||status(i)==="bad")?chargeLabel(i):expLabel(i)}`).join("\n");
   try{ if(navigator.serviceWorker&&navigator.serviceWorker.controller){navigator.serviceWorker.ready.then(r=>r.showNotification(t("notifTitle"),{body,icon:"icon.svg",tag:"rezerva"}))} else new Notification(t("notifTitle"),{body}); localStorage.setItem(key,todayISO())}catch(e){}
 }
 
@@ -554,12 +598,15 @@ document.addEventListener("click",e=>{
   const art=b.closest(".item");
   if(art){const it=items.find(i=>i.id===art.dataset.id);if(!it)return;
     if(b.dataset.act==="edit")openForm(it);
+    if(b.dataset.act==="charged"){it.charged=todayISO();if(!it.ex){it.updated=Date.now();cloudSave(it)}dbPut(it);toast(t("chargedToast"));render()}
     if(b.dataset.act==="plus"||b.dataset.act==="minus"){it.qty=Math.max(0,it.qty+(b.dataset.act==="plus"?1:-1));if(!it.ex){it.updated=Date.now();cloudQty(it)}dbPut(it);art.querySelector(".qty span").textContent=it.qty}
     return}
-  if(b.dataset.add){const s=SUG.flatMap(c=>c.items).find(x=>x.id===b.dataset.add);const cat=SUG.find(c=>c.items.includes(s)).c;
+  if(b.dataset.addsug){openSugForm(b.dataset.addsug);return}
+  if(b.dataset.delsug){S.customSug=(S.customSug||[]).filter(x=>x.id!==b.dataset.delsug);S.customT=Date.now();saveSettings();cloudSettings();render();return}
+  if(b.dataset.add){const cats=sugCats();const s=cats.flatMap(c=>c.items).find(x=>x.id===b.dataset.add);if(!s)return;const cat=cats.find(c=>c.items.includes(s)).c;
     openForm(null,{name:s[S.lang],desc:s["n"+S.lang]||"",cat,sid:s.id,u:UNITS.includes(s.u)?s.u:"kom"});return}
   if(b.id==="notifBtn"){try{Notification.requestPermission().then(()=>{render();checkNotify()})}catch(e){}return}
-  if(b.id==="expBtn"){const data=JSON.stringify({app:"rezerva",v:1,exported:new Date().toISOString(),have:S.have,items:items.filter(i=>!i.ex)});
+  if(b.id==="expBtn"){const data=JSON.stringify({app:"rezerva",v:1,exported:new Date().toISOString(),have:S.have,customSug:S.customSug||[],items:items.filter(i=>!i.ex)});
     if(!inFrame){try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:"application/json"}));a.download=`rezerva-${todayISO()}.json`;a.click();return}catch(e){}}
     $("#expOut").innerHTML=`<p class="muted" style="margin:0 0 6px">${t("exportHelp")}</p><textarea class="code" id="expTa" readonly></textarea><div style="margin-top:6px"><button class="btn small" id="copyBtn">${t("copy")}</button></div>`;$("#expTa").value=data;return}
   if(b.id==="copyBtn"){const ta=$("#expTa");const done=()=>toast(t("copied"));try{navigator.clipboard.writeText(ta.value).then(done,()=>{ta.select()})}catch(e){ta.select()}return}
@@ -572,6 +619,7 @@ document.addEventListener("input",e=>{
 document.addEventListener("change",e=>{
   const id=e.target.id;
   if(id==="cat"){S.cat=e.target.value;saveSettings();renderStock()}
+  if(id==="fC"){const box=$("#chargeBox");if(box)box.hidden=!CHARGE_CATS.includes(e.target.value)}
   if(id==="sort"){S.sort=e.target.value;saveSettings();renderStock()}
   if(id==="people"){S.people=Math.min(20,Math.max(1,parseInt(e.target.value||"1",10)));S.cfgT=Date.now();saveSettings();cloudSettings();renderSug()}
   if(id==="days"){S.days=+e.target.value;S.cfgT=Date.now();saveSettings();cloudSettings();renderSug()}
