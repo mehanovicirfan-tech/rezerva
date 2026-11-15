@@ -136,6 +136,12 @@ input[type=text],input[type=number],input[type=date],input[type=search],select,t
 .viewer p{color:#fff;margin:0;font-weight:700;text-align:center}
 .viewer button{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));background:rgb(255 255 255 / .15);color:#fff;border:0;border-radius:999px;width:44px;height:44px;font-size:20px;cursor:pointer}
 .item .thumb img{cursor:zoom-in}
+.cam{position:fixed;inset:0;z-index:40;background:#000;display:flex;flex-direction:column}
+.cam video{flex:1;min-height:0;width:100%;object-fit:contain;background:#000}
+.cam .bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.cam .shoot{width:72px;height:72px;border-radius:50%;border:5px solid #fff;background:rgb(255 255 255 / .25);cursor:pointer}
+.cam .shoot:active{background:#fff}
+.cam .cbtn{background:rgb(255 255 255 / .15);color:#fff;border:0;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer;min-width:96px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;z-index:30;font-weight:700}
 textarea.code{font:12px var(--f-mono);height:140px}
 @media (prefers-reduced-motion:no-preference){.item,.sug{transition:background .2s}}
@@ -164,6 +170,7 @@ textarea.code{font:12px var(--f-mono);height:140px}
 </main>
 <button class="btn primary fab" id="fab" data-t="add"></button>
 <div id="modal"></div>
+<div id="camLayer"></div>
 
 <script>
 (() => {
@@ -174,7 +181,7 @@ bs:{app:"Rezerva hrane Mehanović",tabStock:"Zaliha",tabSug:"Prijedlozi",tabSet:
  total:"Proizvoda",expired:"Isteklo",soon:"Uskoro ističe",okS:"U redu",search:"Pretraži…",allCats:"Sve kategorije",
  sortExp:"Po datumu isteka",sortName:"Po nazivu",sortQty:"Po količini",sortNew:"Najnovije",
  name:"Naziv proizvoda",desc:"Opis",weight:"Gramaža / zapremina",unit:"Jedinica",qty:"Količina (komada)",expiry:"Rok trajanja",cat:"Kategorija",photo:"Slika proizvoda",
- takePhoto:"📷 Uslikaj",pickPhoto:"🖼 Iz galerije",removePhoto:"Ukloni sliku",save:"Spremi",cancel:"Odustani",del:"Obriši",edit:"Uredi",newItem:"Novi proizvod",editItem:"Uredi proizvod",
+ takePhoto:"📷 Uslikaj",camFlip:"Okreni",camErr:"Kamera nije dostupna. Otvaram kameru telefona.",draftBack:"Vraćen je nedovršeni unos.",pickPhoto:"🖼 Iz galerije",removePhoto:"Ukloni sliku",save:"Spremi",cancel:"Odustani",del:"Obriši",edit:"Uredi",newItem:"Novi proizvod",editItem:"Uredi proizvod",
  confirmDel:"Obrisati ovaj proizvod?",yesDel:"Da, obriši",
  daysLeft:n=>n===0?"ističe danas":n===1?"još 1 dan":`još ${n} dana`, daysAgo:n=>n===1?"isteklo prije 1 dan":`isteklo prije ${n} dana`, noExp:"bez roka",
  alertSoon:n=>`${n} ${n===1?"proizvod uskoro ističe":"proizvoda uskoro ističe"}. Iskoristite ih prvo i kupite zamjenu.`,
@@ -196,7 +203,7 @@ fr:{app:"Rezerva hrane Mehanović",tabStock:"Stock",tabSug:"Suggestions",tabSet:
  total:"Produits",expired:"Périmés",soon:"Bientôt périmés",okS:"En ordre",search:"Rechercher…",allCats:"Toutes catégories",
  sortExp:"Par date de péremption",sortName:"Par nom",sortQty:"Par quantité",sortNew:"Les plus récents",
  name:"Nom du produit",desc:"Description",weight:"Poids / volume",unit:"Unité",qty:"Quantité (pièces)",expiry:"Date de péremption",cat:"Catégorie",photo:"Photo du produit",
- takePhoto:"📷 Prendre une photo",pickPhoto:"🖼 Depuis la galerie",removePhoto:"Retirer la photo",save:"Enregistrer",cancel:"Annuler",del:"Supprimer",edit:"Modifier",newItem:"Nouveau produit",editItem:"Modifier le produit",
+ takePhoto:"📷 Prendre une photo",camFlip:"Retourner",camErr:"Caméra indisponible. Ouverture de l'appareil photo du téléphone.",draftBack:"Saisie non terminée restaurée.",pickPhoto:"🖼 Depuis la galerie",removePhoto:"Retirer la photo",save:"Enregistrer",cancel:"Annuler",del:"Supprimer",edit:"Modifier",newItem:"Nouveau produit",editItem:"Modifier le produit",
  confirmDel:"Supprimer ce produit ?",yesDel:"Oui, supprimer",
  daysLeft:n=>n===0?"périme aujourd'hui":n===1?"encore 1 jour":`encore ${n} jours`, daysAgo:n=>n===1?"périmé depuis 1 jour":`périmé depuis ${n} jours`, noExp:"sans date",
  alertSoon:n=>`${n} produit${n>1?"s":""} bientôt périmé${n>1?"s":""}. Consommez-les d'abord et rachetez-en.`,
@@ -445,7 +452,45 @@ function renderSet(){setTimeout(renderSyncStatus,0);
 }
 
 /* ---------- modals ---------- */
-function closeModal(){$("#modal").innerHTML=""}
+function closeModal(){if($("#f"))clearDraft();closeCamera();$("#modal").innerHTML=""}
+/* ---------- unfinished entry is kept, so a phone that reloads the page while the camera is open loses nothing ---------- */
+const DK="rezerva.draft",DPK="rezerva.draftPhoto";
+let formCtx=null;
+function saveDraft(){const f=$("#f");if(!f||!formCtx)return;
+  const v=id=>{const el=$("#"+id);return el?el.value:""};
+  const d={editId:formCtx.isNew?null:formCtx.id,base:formCtx.base,data:{name:v("fName"),desc:v("fDesc"),w:v("fW"),u:v("fU"),qty:v("fQ"),expiry:v("fE"),cat:v("fC"),charged:v("fCh"),chargeEvery:v("fChE")},t:Date.now()};
+  try{localStorage.setItem(DK,JSON.stringify(d));localStorage.setItem(DPK,draftPhoto||"")}catch(e){}}
+function clearDraft(){formCtx=null;try{localStorage.removeItem(DK);localStorage.removeItem(DPK)}catch(e){}}
+function restoreDraft(){let d=null,ph="";try{d=JSON.parse(localStorage.getItem(DK)||"null");ph=localStorage.getItem(DPK)||""}catch(e){}
+  if(!d||Date.now()-(d.t||0)>864e5){clearDraft();return}
+  const ex=d.editId?items.find(i=>i.id===d.editId):null;if(d.editId&&!ex){clearDraft();return}
+  const data={...d.data};data.w=data.w===""?"":+data.w;data.qty=parseInt(data.qty||"1",10)||0;data.chargeEvery=+data.chargeEvery||30;
+  openForm(ex,d.base,{data,photo:ph});toast(t("draftBack"))}
+/* ---------- camera inside the app ---------- */
+let camStream=null,camFacing="environment";
+const canInAppCam=()=>!inFrame&&window.isSecureContext&&!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);
+function closeCamera(){if(camStream){camStream.getTracks().forEach(tr=>tr.stop());camStream=null}const l=$("#camLayer");if(l)l.innerHTML=""}
+function fallbackCamera(){saveDraft();const i=$("#phIn");if(i)i.click()}
+async function openCamera(){
+  if(!canInAppCam()){fallbackCamera();return}
+  saveDraft();
+  $("#camLayer").innerHTML=`<div class="cam" role="dialog" aria-modal="true"><video id="camV" autoplay playsinline muted></video>
+    <div class="bar"><button type="button" class="cbtn" id="camX">${t("cancel")}</button><button type="button" class="shoot" id="camShot" aria-label="${t("takePhoto")}"></button><button type="button" class="cbtn" id="camFlip">${t("camFlip")}</button></div></div>`;
+  $("#camX").onclick=closeCamera;
+  $("#camFlip").onclick=()=>{camFacing=camFacing==="environment"?"user":"environment";startStream()};
+  $("#camShot").onclick=()=>{const v=$("#camV");if(!v||!v.videoWidth)return;
+    const M=1024,k=Math.min(1,M/Math.max(v.videoWidth,v.videoHeight));const c=document.createElement("canvas");c.width=Math.round(v.videoWidth*k);c.height=Math.round(v.videoHeight*k);
+    c.getContext("2d").drawImage(v,0,0,c.width,c.height);let q=.75,u=c.toDataURL("image/jpeg",q);while(u.length>200000&&q>.25){q-=.1;u=c.toDataURL("image/jpeg",q)}
+    closeCamera();setPhoto(u)};
+  await startStream();
+}
+async function startStream(){
+  if(camStream){camStream.getTracks().forEach(tr=>tr.stop());camStream=null}
+  try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:camFacing},width:{ideal:1920},height:{ideal:1080}},audio:false});
+    const v=$("#camV");if(!v){closeCamera();return}v.srcObject=camStream;try{await v.play()}catch(e){}}
+  catch(e){closeCamera();toast(t("camErr"));fallbackCamera()}
+}
+function setPhoto(u){if(!u)return;draftPhoto=u;if(!$("#ph"))return;$("#ph").innerHTML=`<img src="${draftPhoto}" alt="">`;$("#phRm").hidden=false;saveDraft()}
 function confirmBox(msg,yes,fn){
   $("#modal").innerHTML=`<div class="scrim"><div class="dialog" role="dialog" aria-modal="true"><p style="margin:0;font-size:17px">${esc(msg)}</p><footer><button class="btn" id="cNo">${t("cancel")}</button><button class="btn danger" id="cYes">${esc(yes)}</button></footer></div></div>`;
   $("#cNo").onclick=closeModal;$("#cYes").onclick=()=>{closeModal();fn()};$("#cYes").focus();
@@ -467,13 +512,14 @@ function openSugForm(cat){
   setTimeout(()=>$("#sName").focus(),30);
 }
 let draftPhoto="";
-function openForm(it,preset){
+function openForm(it,preset,restore){
   const isNew=!it; it=it||{id:uid(),name:"",desc:"",w:"",u:"g",qty:1,expiry:"",cat:"food",photo:"",created:Date.now(),...preset};
   draftPhoto=it.photo||"";
+  if(restore){it={...it,...restore.data};if(restore.photo)draftPhoto=restore.photo}
   $("#modal").innerHTML=`<div class="scrim"><form class="dialog" id="f" role="dialog" aria-modal="true" novalidate>
    <header><h2>${isNew?t("newItem"):t("editItem")}</h2><button type="button" class="btn ghost small" id="fx" aria-label="${t("close")}">✕</button></header>
    <div class="photo"><div class="thumb" id="ph">${draftPhoto?`<img src="${draftPhoto}" alt="">`:""}</div>
-     <div class="row" style="flex-direction:column;align-items:flex-start"><div class="row"><label class="btn" for="phIn">${t("takePhoto")}</label><label class="btn" for="phPick">${t("pickPhoto")}</label></div>
+     <div class="row" style="flex-direction:column;align-items:flex-start"><div class="row"><button type="button" class="btn" id="phCam">${t("takePhoto")}</button><label class="btn" for="phPick">${t("pickPhoto")}</label></div>
        <input type="file" id="phIn" accept="image/*" capture="environment" hidden><input type="file" id="phPick" accept="image/*" hidden>
        <button type="button" class="btn small ghost" id="phRm" ${draftPhoto?"":"hidden"}>${t("removePhoto")}</button></div></div>
    <label class="field"><span>${t("name")} *</span><input type="text" id="fName" value="${esc(it.name)}" required></label>
@@ -492,9 +538,14 @@ function openForm(it,preset){
    <footer>${isNew?"":`<button type="button" class="btn danger" id="fDel" style="margin-right:auto">${t("del")}</button>`}
      <button type="button" class="btn" id="fCancel">${t("cancel")}</button><button class="btn primary" type="submit">${t("save")}</button></footer>
   </form></div>`;
+  formCtx={isNew,id:it.id,base:isNew?{id:it.id,created:it.created,sid:it.sid}:null};
   $("#fx").onclick=$("#fCancel").onclick=closeModal;
-  $("#phIn").onchange=$("#phPick").onchange=async e=>{const f=e.target.files[0];if(!f)return;draftPhoto=await shrink(f);if(!$("#ph"))return;$("#ph").innerHTML=`<img src="${draftPhoto}" alt="">`;$("#phRm").hidden=false};
-  $("#phRm").onclick=()=>{draftPhoto="";$("#ph").innerHTML="";$("#phRm").hidden=true};
+  $("#phCam").onclick=openCamera;
+  $("label[for=phPick]").addEventListener("click",saveDraft);
+  $("#phIn").onchange=$("#phPick").onchange=async e=>{const f=e.target.files[0];if(!f)return;setPhoto(await shrink(f))};
+  $("#phRm").onclick=()=>{draftPhoto="";$("#ph").innerHTML="";$("#phRm").hidden=true;saveDraft()};
+  $("#f").addEventListener("input",saveDraft);$("#f").addEventListener("change",e=>{if(e.target.type!=="file")saveDraft()});
+  if(restore)saveDraft();
   if(!isNew)$("#fDel").onclick=()=>confirmBox(t("confirmDel"),t("yesDel"),()=>{items=items.filter(x=>x.id!==it.id);dbDel(it.id);cloudDel(it);toast(t("deleted"));render()});
   $("#f").onsubmit=e=>{e.preventDefault();const name=$("#fName").value.trim();if(!name){$("#fErr").hidden=false;$("#fName").focus();return}
     const n={...it,name,desc:$("#fDesc").value.trim(),w:$("#fW").value===""?"":+$("#fW").value,u:$("#fU").value,qty:Math.max(0,parseInt($("#fQ").value||"0",10)),expiry:$("#fE").value,cat:$("#fC").value,charged:CHARGE_CATS.includes($("#fC").value)?$("#fCh").value:(it.charged||""),chargeEvery:Math.min(365,Math.max(1,parseInt($("#fChE").value||"30",10))),photo:draftPhoto,ex:false,updated:Date.now(),photoId:draftPhoto?(draftPhoto===it.photo&&it.photoId?it.photoId:uid()):""};
@@ -627,7 +678,7 @@ document.addEventListener("change",e=>{
   if(e.target.classList.contains("chk")){const sid=e.target.closest(".sug").dataset.sid;S.have[sid]={v:e.target.checked,t:Date.now()};saveSettings();cloudSettings();renderSug()}
   if(id==="impFile"){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>doImport(r.result);r.readAsText(f)}
 });
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#modal").innerHTML)closeModal()});
+document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if(camStream||$("#camLayer").innerHTML){closeCamera();return}if($("#modal").innerHTML)closeModal()});
 
 /* ---------- boot ---------- */
 (async()=>{
@@ -635,7 +686,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#modal").innerHT
   const stored=await dbAll();
   items=stored||[];
   if(!items.length&&!S.seeded){items=seed();items.forEach(dbPut);S.seeded=true;saveSettings()}
-  render();checkNotify();cloudInit();
+  render();checkNotify();cloudInit();restoreDraft();
   if(!inFrame&&navigator.storage&&navigator.storage.persist){try{navigator.storage.persist()}catch(e){}}
   setInterval(()=>{if(S.view==="stock"&&!$("#modal").innerHTML&&document.activeElement?.id!=="q")renderStock();checkNotify()},3600000);
   if("serviceWorker" in navigator&&!inFrame&&location.protocol.startsWith("http")){try{navigator.serviceWorker.register("sw.js")}catch(e){}}
